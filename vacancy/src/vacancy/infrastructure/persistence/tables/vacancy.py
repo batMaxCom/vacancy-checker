@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Numeric, String, Table, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String, Table, Text, Uuid
 from sqlalchemy.orm import composite
 
 from vacancy.domain.vacancies.entity import Vacancy
@@ -8,9 +8,9 @@ from vacancy.infrastructure.persistence.tables.base import MAPPER_REGISTRY
 VACANCY_TABLE = Table(
     "vacancy",
     MAPPER_REGISTRY.metadata,
-    Column("id", BigInteger, primary_key=True),
-    Column("source_id", BigInteger, ForeignKey("source.id"), nullable=False),
-    Column("external_id", String(255), nullable=False),
+    Column("id", Uuid, primary_key=True),
+    Column("source_id", Uuid, ForeignKey("source.id"), nullable=False),
+    Column("external_id", String(255), nullable=True),
     Column("title", String(255), nullable=False),
     Column("description", Text, nullable=False),
     Column("company_name", String(255), nullable=True),

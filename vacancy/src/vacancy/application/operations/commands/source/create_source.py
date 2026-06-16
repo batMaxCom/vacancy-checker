@@ -10,6 +10,7 @@ from vacancy.domain.sources.value_objects import SourceId
 @dataclass(frozen=True, slots=True)
 class CreateSourceCommand(Command[None]):
     name: str
+    base_url: str = ""
 
 
 class CreateSourceCommandHandler(CommandHandler[CreateSourceCommand, None]):
@@ -27,8 +28,9 @@ class CreateSourceCommandHandler(CommandHandler[CreateSourceCommand, None]):
 
     async def handle(self, command: CreateSourceCommand) -> None:
         source = Source.create(
-            source_id=SourceId(self.__id_generator.next_id().int),
+            source_id=SourceId(self.__id_generator.next_id()),
             name=command.name,
+            base_url=command.base_url,
         )
 
         await self.__source_repository.add(source)

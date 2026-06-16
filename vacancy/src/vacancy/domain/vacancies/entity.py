@@ -11,7 +11,7 @@ class Vacancy(Entity[VacancyId]):
         self,
         vacancy_id: VacancyId,
         source_id: SourceId,
-        external_id: str,
+        external_id: str | None,
         title: str,
         description: str,
         company_name: str | None,
@@ -46,7 +46,7 @@ class Vacancy(Entity[VacancyId]):
         return self._source_id
 
     @property
-    def external_id(self) -> str:
+    def external_id(self) -> str | None:
         return self._external_id
 
     @property
@@ -139,7 +139,7 @@ class Vacancy(Entity[VacancyId]):
         cls,
         vacancy_id: VacancyId,
         source_id: SourceId,
-        external_id: str,
+        external_id: str | None,
         title: str,
         description: str,
         company_name: str | None,
@@ -174,7 +174,7 @@ class Vacancy(Entity[VacancyId]):
         cls,
         vacancy_id: VacancyId,
         source_id: SourceId,
-        external_id: str,
+        external_id: str | None,
         title: str,
         description: str,
         company_name: str | None,

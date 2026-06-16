@@ -14,7 +14,7 @@ from vacancy.domain.vacancies.value_objects import Salary, VacancyId
 class CreateVacancyCommand(Command[None]):
     vacancy_id: VacancyId
     source_id: SourceId
-    external_id: str
+    external_id: str | None
     title: str
     description: str
     company_name: str | None

@@ -1,3 +1,4 @@
+import uuid
 from typing import NewType
 
-SourceId = NewType("SourceId", int)
+SourceId = NewType("SourceId", uuid.UUID)

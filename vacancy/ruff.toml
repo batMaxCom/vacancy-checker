@@ -12,7 +12,7 @@ exclude = [
     "build",
     "docs",
     "benchmarks",
-    ".*alembic/.*",
+    "**/alembic/**",
     "tests/*",
     "**/proto/*"
 ]

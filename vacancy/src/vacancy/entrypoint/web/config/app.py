@@ -14,6 +14,8 @@ class AppConfig:
     cors_origins: list[str]
     loop: str
     debug: bool
+    page_number: int
+    page_size: int
 
     @classmethod
     def from_env(cls) -> Self:
@@ -25,4 +27,6 @@ class AppConfig:
             cors_origins=environ.get("CORS_ORIGINS", "*").split(","),
             loop=environ.get("LOOP", "auto"),
             debug=bool(environ.get("DEBUG", "False")),
+            page_number=int(environ.get("PAGE_NUMBER", "1")),
+            page_size=int(environ.get("PAGE_SIZE", "20")),
         )
