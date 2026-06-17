@@ -1,4 +1,3 @@
-import math
 from typing import Any
 
 from sqlalchemy import func, select
@@ -12,11 +11,11 @@ from vacancy.application.common.dto import (
 )
 from vacancy.application.ports.gateways import SourceGateway
 from vacancy.domain.sources.value_objects import SourceId
-from vacancy.infrastructure.persistence.adapters.common.mixins import FilterMixin
+from vacancy.infrastructure.persistence.adapters.common.mixins import FilterMixin, PaginationMixin
 from vacancy.infrastructure.persistence.tables.source import SOURCE_TABLE
 
 
-class SourceGatewayImpl(SourceGateway, FilterMixin):
+class SourceGatewayImpl(SourceGateway, FilterMixin, PaginationMixin):
     def __init__(self, session: AsyncSession) -> None:
         self.__session = session
 
@@ -58,15 +57,12 @@ class SourceGatewayImpl(SourceGateway, FilterMixin):
         count_result = await self.__session.execute(count_query)
         count_records = count_result.scalar() or 0
 
-        page_number = pagination.page_number - 1 if pagination.page_number > 0 else 0
-        base_query = base_query.offset(page_number * pagination.page_size).limit(
-            pagination.page_size
+        base_query = self._add_query_offset_and_limit(
+            base_query, pagination.page_number, pagination.page_size
         )
 
         result = await self.__session.execute(base_query)
         rows = result.all()
-
-        max_page_count = math.ceil(count_records / pagination.page_size) if count_records else 0
 
         records = [
             SourceDto(
@@ -78,12 +74,7 @@ class SourceGatewayImpl(SourceGateway, FilterMixin):
             for row in rows
         ]
 
-        return PaginationResultDto(
-            page=pagination.page_number,
-            max_page_count=max_page_count,
-            count_records=count_records,
-            records=records,
-        )
+        return self._get_pagination_result(pagination, records, count_records)
 
     async def get_select_list(self) -> list[SelectItemDto[SourceId]]:
         query = select(

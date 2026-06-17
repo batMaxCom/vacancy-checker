@@ -1,6 +1,5 @@
 from typing import Any, cast
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vacancy.domain.vacancies.entity import Vacancy
@@ -29,7 +28,7 @@ class VacancyRepositoryImpl(VacancyRepository, QueryMixin, FilterMixin):
         await self.__session.delete(entity)
 
     async def exists(self, **filters: Any) -> bool:
-        query = select(VACANCY_TABLE.c.id)
+        query = self._get_query(VACANCY_TABLE, ["id"])
         query = self._add_filters(VACANCY_TABLE, query, **filters)
         result = await self.__session.execute(query)
         return result.scalar() is not None

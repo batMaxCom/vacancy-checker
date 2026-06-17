@@ -1,6 +1,5 @@
 from typing import Any, cast
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vacancy.domain.sources.entity import Source
@@ -29,7 +28,7 @@ class SourceRepositoryImpl(SourceRepository, QueryMixin, FilterMixin):
         await self.__session.delete(entity)
 
     async def exists(self, **filters: Any) -> bool:
-        query = select(SOURCE_TABLE.c.id)
+        query = self._get_query(SOURCE_TABLE, ["id"])
         query = self._add_filters(SOURCE_TABLE, query, **filters)
         result = await self.__session.execute(query)
         return result.scalar() is not None

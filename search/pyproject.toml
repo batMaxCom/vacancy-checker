@@ -1,0 +1,34 @@
+[project]
+name = "search"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "beautifulsoup4>=4.13.0",
+    "dishka>=1.10.1",
+    "fastapi>=0.137.0",
+    "httpx>=0.28.0",
+    "lxml>=5.3.0",
+    "sqlalchemy>=2.0.50",
+    "structlog>=26.1.0",
+    "uvicorn>=0.49.0",
+]
+
+[project.scripts]
+search-cli = "search.entrypoint.web.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"search.infrastructure.persistence.alembic" = ["alembic.ini"]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+    "ruff>=0.15.17",
+]
