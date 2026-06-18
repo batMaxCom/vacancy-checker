@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+import asyncio
+from dataclasses import asdict, dataclass
 
+from search.application.ports.broker.publisher import EventPublisher
 from search.application.ports.cqrs import Command
 from search.application.ports.cqrs.handlers import CommandHandler
 from search.application.ports.id_generator import UUIDGenerator
@@ -27,6 +29,7 @@ class RunSearchCommandHandler(CommandHandler[RunSearchCommand, SearchJobId]):
         searcher: VacancySearcher,
         transaction_manager: AsyncTransactionManager,
         time_provider: TimeProvider,
+        publisher: EventPublisher,
     ) -> None:
         self.__id_generator = id_generator
         self.__search_profile_repository = search_profile_repository
@@ -34,6 +37,7 @@ class RunSearchCommandHandler(CommandHandler[RunSearchCommand, SearchJobId]):
         self.__searcher = searcher
         self.__transaction_manager = transaction_manager
         self.__time_provider = time_provider
+        self._publisher = publisher
 
     async def handle(self, command: RunSearchCommand) -> SearchJobId:
         profile = await self.__search_profile_repository.get(
@@ -53,10 +57,16 @@ class RunSearchCommandHandler(CommandHandler[RunSearchCommand, SearchJobId]):
         try:
             vacancies = await self.__searcher.search_by_profile(profile)
             search_job.complete(vacancies_found=len(vacancies))
+
         except Exception:
             search_job.fail()
 
         await self.__search_job_repository.update(search_job)
         await self.__transaction_manager.commit()
-
+        await asyncio.gather(
+            *(
+                self._publisher.publish("new_vacancies", asdict(vacancy))
+                for vacancy in vacancies
+            ),
+        )
         return search_job.entity_id

@@ -5,18 +5,20 @@ from search.entrypoint.di.providers.web import (
     DomainAdaptersProvider,
     FastapiProvider,
     HandlersProvider,
+    KafkaProvider,
     LoggerAdapterProvider,
     MediatorProvider,
     SearcherProvider,
     WebConfigProvider,
     WebPersistenceProvider,
 )
-from search.entrypoint.web.config import AppConfig, PostgresConfig
+from search.entrypoint.web.config import AppConfig, KafkaConfig, PostgresConfig
 
 
 def web_container(
         app_config: AppConfig,
         db_config: PostgresConfig,
+        broker_config: KafkaConfig,
 ) -> AsyncContainer:
     return make_async_container(
         MediatorProvider(),
@@ -28,8 +30,10 @@ def web_container(
         FastapiProvider(),
         HandlersProvider(),
         LoggerAdapterProvider(),
+        KafkaProvider(),
         context={
             AppConfig: app_config,
             PostgresConfig: db_config,
+            KafkaConfig: broker_config
         }
     )
