@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
+    "confluent-kafka>=2.14.2",
     "dishka>=1.10.1",
     "fastapi>=0.137.0",
     "sqlalchemy>=2.0.50",

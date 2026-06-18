@@ -11,15 +11,61 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body.result as T
 }
 
+const STATUS_MAP = ['ACTIVE', 'ARCHIVED', 'DELETED']
+
+function mapVacancy(r: any): Vacancy {
+  return {
+    id: r.vacancy_id,
+    source_id: r.source_id,
+    external_id: r.external_id ?? null,
+    title: r.title,
+    description: r.description,
+    company_name: r.company_name || null,
+    employment_type: r.employment_type ?? '',
+    work_format: r.work_format ?? '',
+    salary: r.salary ?? null,
+    location: r.location || null,
+    url: r.url,
+    status: STATUS_MAP[r.status - 1] ?? 'ACTIVE',
+    published_at: r.published_at,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+  }
+}
+
 export const vacancyApi = {
-  getSources: (page = 1, pageSize = 20) =>
-    request<PaginationResult<Source>>(`/source/list/paginated?page_number=${page}&page_size=${pageSize}`),
+  getSources: async (page = 1, pageSize = 20) => {
+    const result = await request<any>(`/source/list/paginated?page_number=${page}&page_size=${pageSize}`)
+    return {
+      items: (result.records || []).map((r: any) => ({
+        id: r.source_id,
+        name: r.name,
+        base_url: r.base_url,
+        is_active: r.is_active,
+        created_at: r.created_at ?? '',
+        updated_at: r.updated_at ?? '',
+      })),
+      total: result.count_records,
+      page: result.page,
+      page_size: pageSize,
+      total_pages: result.max_page_count,
+    } as PaginationResult<Source>
+  },
 
   getSourceSelectList: () =>
     request<SelectItem[]>('/source/list/select'),
 
-  getSource: (id: string) =>
-    request<Source>(`/source/${id}`),
+  getSource: async (id: string) => {
+    const result = await request<any>(`/source/${id}`)
+    return {
+      id: result.source_id,
+      name: result.name,
+      base_url: result.base_url,
+      is_active: result.is_active,
+      created_at: result.created_at ?? '',
+      updated_at: result.updated_at ?? '',
+    } as Source
+  },
 
   createSource: (data: { name: string; base_url?: string }) =>
     request<null>('/source', { method: 'POST', body: JSON.stringify({ body: data }) }),
@@ -31,11 +77,21 @@ export const vacancyApi = {
   }) =>
     request<null>(`/source/${id}`, { method: 'PUT', body: JSON.stringify({ body: data }) }),
 
-  getVacancies: (page = 1, pageSize = 20) =>
-    request<PaginationResult<Vacancy>>(`/vacancy/list/paginated?page_number=${page}&page_size=${pageSize}`),
+  getVacancies: async (page = 1, pageSize = 20) => {
+    const result = await request<any>(`/vacancy/list/paginated?page_number=${page}&page_size=${pageSize}`)
+    return {
+      items: (result.records || []).map(mapVacancy),
+      total: result.count_records,
+      page: result.page,
+      page_size: pageSize,
+      total_pages: result.max_page_count,
+    } as PaginationResult<Vacancy>
+  },
 
-  getVacancy: (id: string) =>
-    request<Vacancy>(`/vacancy/${id}`),
+  getVacancy: async (id: string) => {
+    const result = await request<any>(`/vacancy/${id}`)
+    return mapVacancy(result)
+  },
 
   createVacancy: (data: {
     vacancy_id: string

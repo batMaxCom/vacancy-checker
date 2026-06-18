@@ -1,4 +1,5 @@
 from .application import ApplicationAdaptersProvider
+from .broker import KafkaBrokerProvider
 from .config import WebConfigProvider
 from .domain import DomainAdaptersProvider
 from .fastapi import FastapiProvider
@@ -15,5 +16,6 @@ __all__ = (
     "ApplicationAdaptersProvider",
     "FastapiProvider",
     "HandlersProvider",
+    "KafkaBrokerProvider",
     "LoggerAdapterProvider",
 )

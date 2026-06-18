@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from vacancy.application.common.dto import PaginationDto, PaginationResultDto, VacancyDto
 from vacancy.application.ports.gateways import VacancyGateway
 from vacancy.domain.sources.value_objects import SourceId
-from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
+from vacancy.domain.vacancies.enums import VacancyStatus
 from vacancy.domain.vacancies.value_objects import Salary, VacancyId
 from vacancy.infrastructure.persistence.adapters.common.mixins import FilterMixin, PaginationMixin
 from vacancy.infrastructure.persistence.tables.vacancy import VACANCY_TABLE
@@ -96,7 +96,6 @@ class VacancyGatewayImpl(VacancyGateway, FilterMixin, PaginationMixin):
                 Decimal(row.salary_max_amount) if row.salary_max_amount is not None else None
             )
             salary = Salary(min_amount=min_amount, max_amount=max_amount)
-
         return VacancyDto(
             vacancy_id=VacancyId(row.id),
             source_id=SourceId(row.source_id),
@@ -104,8 +103,8 @@ class VacancyGatewayImpl(VacancyGateway, FilterMixin, PaginationMixin):
             title=row.title,
             description=row.description,
             company_name=row.company_name,
-            employment_type=EmploymentType(row.employment_type),
-            work_format=WorkFormat(row.work_format),
+            employment_type=row.employment_type,
+            work_format=row.work_format,
             salary=salary,
             location=row.location,
             url=row.url,

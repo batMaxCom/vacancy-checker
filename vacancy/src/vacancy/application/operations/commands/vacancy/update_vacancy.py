@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from vacancy.application.ports import AsyncTransactionManager, TimeProvider
 from vacancy.application.ports.cqrs import Command, CommandHandler
+from vacancy.application.ports.logger import CQRSLogger
 from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
 from vacancy.domain.vacancies.repository import VacancyRepository
 from vacancy.domain.vacancies.value_objects import Salary, VacancyId
@@ -27,10 +28,12 @@ class UpdateVacancyCommandHandler(CommandHandler[UpdateVacancyCommand, None]):
         vacancy_repository: VacancyRepository,
         transaction_manager: AsyncTransactionManager,
         time_provider: TimeProvider,
+        logger: CQRSLogger,
     ) -> None:
         self.__vacancy_repository = vacancy_repository
         self.__transaction_manager = transaction_manager
         self.__time_provider = time_provider
+        self.__logger = logger
 
     async def handle(self, command: UpdateVacancyCommand) -> None:
         vacancy = await self.__vacancy_repository.get(vacancy_id=command.vacancy_id)
@@ -55,3 +58,12 @@ class UpdateVacancyCommandHandler(CommandHandler[UpdateVacancyCommand, None]):
 
         await self.__vacancy_repository.update(vacancy)
         await self.__transaction_manager.commit()
+
+        await self.__logger.ainfo(
+            event="UPDATE_VACANCY_COMMAND",
+            vacancy_id=str(command.vacancy_id),
+            title=command.title,
+            company_name=command.company_name,
+            status=command.status.name if command.status else None,
+            url=command.url,
+        )

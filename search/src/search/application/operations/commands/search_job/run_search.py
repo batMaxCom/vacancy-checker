@@ -65,7 +65,7 @@ class RunSearchCommandHandler(CommandHandler[RunSearchCommand, SearchJobId]):
         await self.__transaction_manager.commit()
         await asyncio.gather(
             *(
-                self._publisher.publish("new_vacancies", asdict(vacancy))
+                self._publisher.publish("vacancy.created", asdict(vacancy))
                 for vacancy in vacancies
             ),
         )

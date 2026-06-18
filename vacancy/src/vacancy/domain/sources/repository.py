@@ -15,7 +15,7 @@ class SourceRepository(ABC):
         """Update."""
 
     @abstractmethod
-    async def get(self, **filters: Any) -> Source:
+    async def get(self, **filters: Any) -> Source | None:
         """Get by id."""
 
     @abstractmethod

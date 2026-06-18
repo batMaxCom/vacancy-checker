@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,11 +18,11 @@ class SourceRepositoryImpl(SourceRepository, QueryMixin, FilterMixin):
     async def update(self, entity: Source) -> None:
         await self.__session.merge(entity)
 
-    async def get(self, **filters: Any) -> Source:
-        query = self._get_query(SOURCE_TABLE)
+    async def get(self, **filters: Any) -> Source | None:
+        query = self._get_query(Source)
         query = self._add_filters(SOURCE_TABLE, query, **filters)
         result = await self.__session.execute(query)
-        return cast("Source", result.scalar_one())
+        return result.scalar_one_or_none()
 
     async def delete(self, entity: Source) -> None:
         await self.__session.delete(entity)

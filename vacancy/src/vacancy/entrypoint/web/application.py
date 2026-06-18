@@ -9,6 +9,7 @@ from fastapi.openapi.utils import get_openapi
 from starlette.middleware.cors import CORSMiddleware
 
 from vacancy import version
+from vacancy.application.ports.broker import EventConsumer
 from vacancy.entrypoint.di.containers import web_container
 from vacancy.entrypoint.web.config import AppConfig, get_web_config
 from vacancy.infrastructure.adapters.logger import setup_logging
@@ -30,9 +31,12 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
     """Application dependencies."""
     setup_mapping()
     container = cast(AsyncContainer, application.state.dishka_container)
+    consumer = await container.get(EventConsumer)
+    await consumer.start()
     try:
         yield
     finally:
+        await consumer.stop()
         await container.close()
 
 def custom_openapi(application: FastAPI) -> Any:
@@ -92,6 +96,7 @@ def app_factory() -> FastAPI:
     container = web_container(
         app_config=config.app_config,
         db_config=config.db_config,
+        broker_config=config.broker_config
     )
     application = setup_application(config.app_config)
     setup_middleware(application, config.app_config)

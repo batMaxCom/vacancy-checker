@@ -2,10 +2,10 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class FoundVacancyDto:
+class NewVacancy:
     external_id: str
     title: str
     description: str
-    company_name: str
+    company: str
     url: str
     source: str

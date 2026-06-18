@@ -24,7 +24,7 @@ class AddKeywordCommandHandler(CommandHandler[AddKeywordCommand, None]):
 
     async def handle(self, command: AddKeywordCommand) -> None:
         search_profile = await self.__search_profile_repository.get(
-            search_profile_id=command.search_profile_id,
+            id=command.search_profile_id,
         )
         search_profile.add_keyword(Keyword(command.keyword))
 

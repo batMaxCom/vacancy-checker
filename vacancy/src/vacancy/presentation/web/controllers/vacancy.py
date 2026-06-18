@@ -15,7 +15,6 @@ from vacancy.application.operations.queries.vacancy.get_vacancy_by_paginated imp
     GetVacancyByPaginatedQuery,
 )
 from vacancy.application.ports.cqrs import Sender
-from vacancy.domain.sources.value_objects import SourceId
 from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
 from vacancy.domain.vacancies.value_objects import Salary, VacancyId
 from vacancy.entrypoint.web.config import AppConfig
@@ -77,11 +76,10 @@ async def create_vacancy(
 
     command = CreateVacancyCommand(
         vacancy_id=VacancyId(body.vacancy_id),
-        source_id=SourceId(body.source_id),
         external_id=body.external_id,
         title=body.title,
         description=body.description,
-        company_name=body.company_name,
+        company_name=body.company_name or "",
         employment_type=EmploymentType(body.employment_type),
         work_format=WorkFormat(body.work_format),
         salary=salary,

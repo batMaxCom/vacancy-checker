@@ -15,12 +15,12 @@ class Vacancy(Entity[VacancyId]):
         title: str,
         description: str,
         company_name: str | None,
-        employment_type: EmploymentType,
-        work_format: WorkFormat,
+        employment_type: EmploymentType | None,
+        work_format: WorkFormat | None,
         salary: Salary | None,
         location: str | None,
         url: str,
-        published_at: datetime,
+        published_at: datetime | None,
         created_at: datetime | None,
         updated_at: datetime | None,
         status: VacancyStatus
@@ -62,11 +62,11 @@ class Vacancy(Entity[VacancyId]):
         return self._company_name
 
     @property
-    def employment_type(self) -> EmploymentType:
+    def employment_type(self) -> EmploymentType | None:
         return self._employment_type
 
     @property
-    def work_format(self) -> WorkFormat:
+    def work_format(self) -> WorkFormat | None:
         return self._work_format
 
     @property
@@ -82,7 +82,7 @@ class Vacancy(Entity[VacancyId]):
         return self._url
 
     @property
-    def published_at(self) -> datetime:
+    def published_at(self) -> datetime | None:
         return self._published_at
 
     @property
@@ -143,12 +143,12 @@ class Vacancy(Entity[VacancyId]):
         title: str,
         description: str,
         company_name: str | None,
-        employment_type: EmploymentType,
-        work_format: WorkFormat,
+        employment_type: EmploymentType | None,
+        work_format: WorkFormat | None,
         salary: Salary | None,
         location: str | None,
         url: str,
-        published_at: datetime,
+        published_at: datetime | None,
     ) -> "Vacancy":
         now = datetime.now(UTC)
         return cls(

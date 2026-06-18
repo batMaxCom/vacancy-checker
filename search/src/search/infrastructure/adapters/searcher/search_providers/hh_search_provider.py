@@ -77,7 +77,7 @@ class HHSearchProvider(VacancySearchProvider):
                     external_id=id_attr,
                     title=title,
                     description=description,
-                    company=company,
+                    company_name=company,
                     url=full_url,
                     source="hh",
                 )

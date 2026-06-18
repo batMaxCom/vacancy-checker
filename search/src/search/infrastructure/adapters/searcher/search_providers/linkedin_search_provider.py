@@ -13,7 +13,7 @@ class LinkedInSearchProvider(VacancySearchProvider):
                 external_id="123",
                 title="Python Developer",
                 description="...",
-                company="Google",
+                company_name="Google",
                 url="https://linkedin.com/job/123",
                 source="linkedin",
             )

@@ -6,6 +6,7 @@ from sqlalchemy.sql import select
 
 from search.domain.search_job.entity import SearchJob
 from search.domain.search_job.repository import SearchJobRepository
+from search.domain.search_profile.value_objects import SearchProfileId
 from search.infrastructure.persistence.adapters.common.mixins import FilterMixin, QueryMixin
 from search.infrastructure.persistence.tables import SEARCH_JOB_TABLE
 
@@ -35,3 +36,9 @@ class SearchJobRepositoryImpl(QueryMixin, FilterMixin, SearchJobRepository):
         stmt = select(sa_exists(inner_query))
         result = await self.__session.execute(stmt)
         return bool(result.scalar())
+
+    async def get_all_by_profile_id(self, profile_id: SearchProfileId) -> list[SearchJob]:
+        query = self._get_query(SearchJob)
+        query = self._add_filters(SEARCH_JOB_TABLE, query, profile_id=profile_id)
+        result = await self.__session.execute(query)
+        return list(result.scalars().all())

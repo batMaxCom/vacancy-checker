@@ -2,28 +2,30 @@ from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String, Table, Tex
 from sqlalchemy.orm import composite
 
 from vacancy.domain.vacancies.entity import Vacancy
+from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
 from vacancy.domain.vacancies.value_objects import Salary
 from vacancy.infrastructure.persistence.tables.base import MAPPER_REGISTRY
+from vacancy.infrastructure.persistence.tables.types import EnumAsString
 
 VACANCY_TABLE = Table(
     "vacancy",
     MAPPER_REGISTRY.metadata,
     Column("id", Uuid, primary_key=True),
-    Column("source_id", Uuid, ForeignKey("source.id"), nullable=False),
+    Column("source_id", Uuid, ForeignKey("source.id"), nullable=True),
     Column("external_id", String(255), nullable=True),
     Column("title", String(255), nullable=False),
     Column("description", Text, nullable=False),
     Column("company_name", String(255), nullable=True),
-    Column("employment_type", String(50), nullable=False),
-    Column("work_format", String(50), nullable=False),
+    Column("employment_type", EnumAsString(EmploymentType, length=50), nullable=True),
+    Column("work_format", EnumAsString(WorkFormat, length=50), nullable=True),
     Column("salary_min_amount", Numeric(10, 2), nullable=True),
     Column("salary_max_amount", Numeric(10, 2), nullable=True),
     Column("location", String(255), nullable=True),
     Column("url", String(500), nullable=False),
-    Column("published_at", DateTime(timezone=True), nullable=False),
+    Column("published_at", DateTime(timezone=True), nullable=True),
     Column("created_at", DateTime(timezone=True), nullable=False),
     Column("updated_at", DateTime(timezone=True), nullable=False),
-    Column("status", String(50), nullable=False),
+    Column("status", EnumAsString(VacancyStatus, length=50), nullable=False),
 )
 
 

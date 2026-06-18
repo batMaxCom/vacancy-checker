@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from vacancy.application.ports import AsyncTransactionManager, TimeProvider
 from vacancy.application.ports.cqrs import Command, CommandHandler
+from vacancy.application.ports.logger import CQRSLogger
 from vacancy.domain.sources.repository import SourceRepository
 from vacancy.domain.sources.value_objects import SourceId
 
@@ -20,13 +21,18 @@ class UpdateSourceCommandHandler(CommandHandler[UpdateSourceCommand, None]):
         source_repository: SourceRepository,
         transaction_manager: AsyncTransactionManager,
         time_provider: TimeProvider,
+        logger: CQRSLogger,
     ) -> None:
         self.__source_repository = source_repository
         self.__transaction_manager = transaction_manager
         self.__time_provider = time_provider
+        self.__logger = logger
 
     async def handle(self, command: UpdateSourceCommand) -> None:
         source = await self.__source_repository.get(source_id=command.source_id)
+
+        if source is None:
+            return
 
         if command.name is not None:
             source.rename(command.name)
@@ -40,3 +46,11 @@ class UpdateSourceCommandHandler(CommandHandler[UpdateSourceCommand, None]):
 
         await self.__source_repository.update(source)
         await self.__transaction_manager.commit()
+
+        await self.__logger.ainfo(
+            event="UPDATE_SOURCE_COMMAND",
+            source_id=str(command.source_id),
+            name=command.name,
+            base_url=command.base_url,
+            is_active=command.is_active,
+        )
