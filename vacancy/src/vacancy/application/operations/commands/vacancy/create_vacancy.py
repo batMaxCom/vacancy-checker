@@ -56,6 +56,8 @@ class CreateVacancyCommandHandler(CommandHandler[CreateVacancyCommand, None]):
             )
             await self.__source_repository.add(source)
             await self.__transaction_manager.flush()
+        if await self.__vacancy_repository.exists(external_id=command.external_id):
+            return
         vacancy = Vacancy.create(
             vacancy_id=command.vacancy_id,
             source_id=source.entity_id,
