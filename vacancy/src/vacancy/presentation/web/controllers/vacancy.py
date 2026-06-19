@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Any
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
@@ -16,7 +16,7 @@ from vacancy.application.operations.queries.vacancy.get_vacancy_by_paginated imp
 )
 from vacancy.application.ports.cqrs import Sender
 from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
-from vacancy.domain.vacancies.value_objects import Salary, VacancyId
+from vacancy.domain.vacancies.value_objects import ProfileId, Salary, VacancyId
 from vacancy.entrypoint.web.config import AppConfig
 from vacancy.presentation.web.schemas.base import SuccessfulResponse
 from vacancy.presentation.web.schemas.request import CreateVacancyRequest, UpdateVacancyRequest
@@ -42,12 +42,17 @@ async def get_vacancy_paginated(
     config: FromDishka[AppConfig],
     page_number: Annotated[int | None, Query()] = None,
     page_size: Annotated[int | None, Query()] = None,
+    profile_id: Annotated[uuid.UUID | None, Query()] = None,
 ) -> SuccessfulResponse:
+    filters: dict[str, Any] = {}
+    if profile_id is not None:
+        filters["profile_id"] = ProfileId(profile_id)
     query = GetVacancyByPaginatedQuery(
         pagination=PaginationDto(
             page_number=page_number if page_number is not None else config.page_number,
             page_size=page_size if page_size is not None else config.page_size,
         ),
+        filters=filters,
     )
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
@@ -76,6 +81,7 @@ async def create_vacancy(
 
     command = CreateVacancyCommand(
         vacancy_id=VacancyId(body.vacancy_id),
+        profile_id=ProfileId(body.profile_id),
         external_id=body.external_id,
         title=body.title,
         description=body.description,
@@ -123,7 +129,7 @@ async def update_vacancy(
         salary=salary,
         location=body.location,
         url=body.url,
-        status=VacancyStatus(body.status) if body.status else None,
+        status=VacancyStatus[body.status] if body.status else None,
     )
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)

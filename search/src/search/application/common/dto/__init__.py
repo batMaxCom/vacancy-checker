@@ -1,7 +1,7 @@
-from .found_vacancy_dto import FoundVacancyDto
+from .found_vacancy_dto import EmploymentType, FoundVacancyDto, Salary, WorkFormat
 from .pagination_dto import Pagination, PaginationResult
 from .search_job_dto import SearchJobDto
-from .search_profile_dto import KeywordDto, SearchProfileDto
+from .search_profile_dto import KeywordDto, SearchProfileDto, SelectSearchProfileDto
 
 __all__ = (
     "Pagination",
@@ -9,5 +9,9 @@ __all__ = (
     "KeywordDto",
     "SearchJobDto",
     "SearchProfileDto",
-    "FoundVacancyDto"
+    "SelectSearchProfileDto",
+    "FoundVacancyDto",
+    "Salary",
+    "EmploymentType",
+    "WorkFormat",
 )

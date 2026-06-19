@@ -21,6 +21,7 @@ from search.application.operations.queries.search_profile import (
     GetActiveProfilesQueryHandler,
     GetSearchProfileQueryHandler,
     GetUserSearchProfilesQueryHandler,
+    GetUserSearchProfilesSelectQueryHandler,
 )
 
 COMMAND_HANDLERS: list[type] = [
@@ -41,6 +42,7 @@ QUERY_HANDLERS: list[type] = [
     GetSearchProfileQueryHandler,
     GetUserSearchProfilesQueryHandler,
     GetActiveProfilesQueryHandler,
+    GetUserSearchProfilesSelectQueryHandler,
 ]
 
 

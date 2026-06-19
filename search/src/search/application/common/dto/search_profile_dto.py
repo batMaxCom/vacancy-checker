@@ -11,6 +11,12 @@ class KeywordDto:
 
 
 @dataclass(frozen=True, slots=True)
+class SelectSearchProfileDto:
+    id: str
+    name: str
+
+
+@dataclass(frozen=True, slots=True)
 class SearchProfileDto:
     id: SearchProfileId
     user_id: UserId

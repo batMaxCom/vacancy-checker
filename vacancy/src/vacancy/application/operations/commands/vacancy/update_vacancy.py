@@ -36,7 +36,7 @@ class UpdateVacancyCommandHandler(CommandHandler[UpdateVacancyCommand, None]):
         self.__logger = logger
 
     async def handle(self, command: UpdateVacancyCommand) -> None:
-        vacancy = await self.__vacancy_repository.get(vacancy_id=command.vacancy_id)
+        vacancy = await self.__vacancy_repository.get(id=command.vacancy_id)
 
         vacancy.update_details(
             title=command.title,

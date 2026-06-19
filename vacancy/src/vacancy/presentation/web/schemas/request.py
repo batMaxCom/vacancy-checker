@@ -20,6 +20,7 @@ class UpdateSourceRequest:
 class CreateVacancyRequest:
     vacancy_id: uuid.UUID
     source_id: uuid.UUID
+    profile_id: uuid.UUID
     external_id: str | None
     title: str
     description: str

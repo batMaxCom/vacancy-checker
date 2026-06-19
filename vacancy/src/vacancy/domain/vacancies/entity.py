@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from vacancy.domain.ports import Entity
 from vacancy.domain.sources.value_objects import SourceId
 from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
-from vacancy.domain.vacancies.value_objects import Salary, VacancyId
+from vacancy.domain.vacancies.value_objects import ProfileId, Salary, VacancyId
 
 
 class Vacancy(Entity[VacancyId]):
@@ -11,6 +11,7 @@ class Vacancy(Entity[VacancyId]):
         self,
         vacancy_id: VacancyId,
         source_id: SourceId,
+        profile_id: ProfileId,
         external_id: str | None,
         title: str,
         description: str,
@@ -27,6 +28,7 @@ class Vacancy(Entity[VacancyId]):
     ) -> None:
         super().__init__(vacancy_id)
         self._source_id = source_id
+        self._profile_id = profile_id
         self._external_id = external_id
         self._title = title
         self._description = description
@@ -44,6 +46,10 @@ class Vacancy(Entity[VacancyId]):
     @property
     def source_id(self) -> SourceId:
         return self._source_id
+
+    @property
+    def profile_id(self) -> ProfileId:
+        return self._profile_id
 
     @property
     def external_id(self) -> str | None:
@@ -139,6 +145,7 @@ class Vacancy(Entity[VacancyId]):
         cls,
         vacancy_id: VacancyId,
         source_id: SourceId,
+        profile_id: ProfileId,
         external_id: str | None,
         title: str,
         description: str,
@@ -154,6 +161,7 @@ class Vacancy(Entity[VacancyId]):
         return cls(
             vacancy_id=vacancy_id,
             source_id=source_id,
+            profile_id=profile_id,
             external_id=external_id,
             title=title,
             description=description,
@@ -174,6 +182,7 @@ class Vacancy(Entity[VacancyId]):
         cls,
         vacancy_id: VacancyId,
         source_id: SourceId,
+        profile_id: ProfileId,
         external_id: str | None,
         title: str,
         description: str,
@@ -191,6 +200,7 @@ class Vacancy(Entity[VacancyId]):
         return cls(
             vacancy_id=vacancy_id,
             source_id=source_id,
+            profile_id=profile_id,
             external_id=external_id,
             title=title,
             description=description,

@@ -1,7 +1,7 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class VacancyStatus(Enum):
-    ACTIVE = auto()
-    ARCHIVED = auto()
-    DELETED = auto()
+    ACTIVE = "active"
+    ARCHIVED = "archived"
+    DELETED = "deleted"

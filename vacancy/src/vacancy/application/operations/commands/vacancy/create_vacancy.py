@@ -12,12 +12,13 @@ from vacancy.domain.sources.value_objects import SourceId
 from vacancy.domain.vacancies.entity import Vacancy
 from vacancy.domain.vacancies.enums import EmploymentType, WorkFormat
 from vacancy.domain.vacancies.repository import VacancyRepository
-from vacancy.domain.vacancies.value_objects import Salary, VacancyId
+from vacancy.domain.vacancies.value_objects import ProfileId, Salary, VacancyId
 
 
 @dataclass(frozen=True, slots=True)
 class CreateVacancyCommand(Command[None]):
     vacancy_id: VacancyId
+    profile_id: ProfileId
     external_id: str | None
     title: str
     description: str
@@ -61,6 +62,7 @@ class CreateVacancyCommandHandler(CommandHandler[CreateVacancyCommand, None]):
         vacancy = Vacancy.create(
             vacancy_id=command.vacancy_id,
             source_id=source.entity_id,
+            profile_id=command.profile_id,
             external_id=command.external_id,
             title=command.title,
             description=command.description,

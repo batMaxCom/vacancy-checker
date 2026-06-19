@@ -77,8 +77,10 @@ export const vacancyApi = {
   }) =>
     request<null>(`/source/${id}`, { method: 'PUT', body: JSON.stringify({ body: data }) }),
 
-  getVacancies: async (page = 1, pageSize = 20) => {
-    const result = await request<any>(`/vacancy/list/paginated?page_number=${page}&page_size=${pageSize}`)
+  getVacancies: async (page = 1, pageSize = 20, profileId?: string) => {
+    const params = new URLSearchParams({ page_number: String(page), page_size: String(pageSize) })
+    if (profileId) params.set('profile_id', profileId)
+    const result = await request<any>(`/vacancy/list/paginated?${params}`)
     return {
       items: (result.records || []).map(mapVacancy),
       total: result.count_records,

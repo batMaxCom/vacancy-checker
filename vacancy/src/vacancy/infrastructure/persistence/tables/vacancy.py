@@ -12,6 +12,7 @@ VACANCY_TABLE = Table(
     MAPPER_REGISTRY.metadata,
     Column("id", Uuid, primary_key=True),
     Column("source_id", Uuid, ForeignKey("source.id"), nullable=True),
+    Column("profile_id", Uuid, nullable=False),
     Column("external_id", String(255), nullable=True),
     Column("title", String(255), nullable=False),
     Column("description", Text, nullable=False),
@@ -36,6 +37,7 @@ def map_vacancy_table() -> None:
         properties={
             "_entity_id": VACANCY_TABLE.c.id,
             "_source_id": VACANCY_TABLE.c.source_id,
+            "_profile_id": VACANCY_TABLE.c.profile_id,
             "_external_id": VACANCY_TABLE.c.external_id,
             "_title": VACANCY_TABLE.c.title,
             "_description": VACANCY_TABLE.c.description,

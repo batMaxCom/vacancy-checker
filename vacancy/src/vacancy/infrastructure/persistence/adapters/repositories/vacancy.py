@@ -19,7 +19,7 @@ class VacancyRepositoryImpl(VacancyRepository, QueryMixin, FilterMixin):
         await self.__session.merge(entity)
 
     async def get(self, **filters: Any) -> Vacancy:
-        query = self._get_query(VACANCY_TABLE)
+        query = self._get_query(Vacancy)
         query = self._add_filters(VACANCY_TABLE, query, **filters)
         result = await self.__session.execute(query)
         return cast("Vacancy", result.scalar_one())

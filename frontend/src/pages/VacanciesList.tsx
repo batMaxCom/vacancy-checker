@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { vacancyApi } from '../api/vacancy'
-import type { Vacancy } from '../api/types'
+import { searchApi } from '../api/search'
+import type { Vacancy, SelectItem } from '../api/types'
 
 const statusBadge: Record<string, string> = {
   ACTIVE: 'badge-success',
@@ -15,23 +16,54 @@ export default function VacanciesList() {
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [profiles, setProfiles] = useState<SelectItem[]>([])
+  const [selectedProfile, setSelectedProfile] = useState('')
 
-  const load = (p: number) => {
+  const load = (p: number, profileId?: string) => {
     setLoading(true)
     setError('')
-    vacancyApi.getVacancies(p)
+    vacancyApi.getVacancies(p, 20, profileId)
       .then(r => { setVacancies(r.items); setTotalPages(r.total_pages); setPage(r.page) })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load(page) }, [])
+  const handleProfileChange = (value: string) => {
+    setSelectedProfile(value)
+    load(1, value || undefined)
+  }
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      searchApi.getProfileSelectList(userId)
+        .then(items => {
+          const mapped: SelectItem[] = items.map((i: any) => ({ value: i.id ?? i.value, label: i.name ?? i.label }))
+          const sorted = [...mapped].sort((a, b) => a.label.localeCompare(b.label))
+          setProfiles(sorted)
+        })
+        .catch(() => {})
+    }
+    load(1)
+  }, [])
 
   return (
     <div>
       <div className="page-header">
         <h2>Vacancies</h2>
         <Link to="/vacancies/new" className="btn btn-primary">+ New Vacancy</Link>
+      </div>
+
+      <div className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end', padding: 16, marginBottom: 16 }}>
+        <div className="form-group" style={{ margin: 0, flex: 1 }}>
+          <label>Profile</label>
+          <select value={selectedProfile} onChange={e => handleProfileChange(e.target.value)}>
+            <option value="">All</option>
+            {profiles.map(p => (
+              <option key={p.value} value={p.value}>{p.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {error && <div className="error-msg">{error}</div>}
@@ -74,9 +106,9 @@ export default function VacanciesList() {
           </div>
           {totalPages > 1 && (
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 16 }}>
-              <button className="btn btn-outline btn-sm" disabled={page <= 1} onClick={() => load(page - 1)}>Prev</button>
+              <button className="btn btn-outline btn-sm" disabled={page <= 1} onClick={() => load(page - 1, selectedProfile || undefined)}>Prev</button>
               <span style={{ padding: '4px 8px', fontSize: 14 }}>{page} / {totalPages}</span>
-              <button className="btn btn-outline btn-sm" disabled={page >= totalPages} onClick={() => load(page + 1)}>Next</button>
+              <button className="btn btn-outline btn-sm" disabled={page >= totalPages} onClick={() => load(page + 1, selectedProfile || undefined)}>Next</button>
             </div>
           )}
         </>

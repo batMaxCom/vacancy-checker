@@ -1,7 +1,7 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class WorkFormat(Enum):
-    REMOTE = auto()
-    HYBRID = auto()
-    OFFICE = auto()
+    REMOTE = "remote"
+    HYBRID = "hybrid"
+    OFFICE = "office"

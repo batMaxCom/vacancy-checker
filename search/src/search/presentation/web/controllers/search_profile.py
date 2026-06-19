@@ -5,7 +5,11 @@ from dishka.integrations.fastapi import inject
 from fastapi import APIRouter
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
-from search.application.common.dto import SearchJobDto, SearchProfileDto
+from search.application.common.dto import (
+    SearchJobDto,
+    SearchProfileDto,
+    SelectSearchProfileDto,
+)
 from search.application.operations.commands.search_job import RunSearchCommand
 from search.application.operations.commands.search_profile import (
     ActivateSearchProfileCommand,
@@ -18,6 +22,7 @@ from search.application.operations.queries.search_job import GetProfileJobsQuery
 from search.application.operations.queries.search_profile import (
     GetSearchProfileQuery,
     GetUserSearchProfilesQuery,
+    GetUserSearchProfilesSelectQuery,
 )
 from search.application.ports.cqrs import Sender
 from search.domain.common.value_objects import UserId
@@ -57,6 +62,17 @@ async def get_user_search_profiles(
     sender: FromDishka[Sender],
 ) -> SuccessfulResponse[list[SearchProfileDto]]:
     query = GetUserSearchProfilesQuery(user_id=UserId(user_id))
+    result = await sender.send(query)
+    return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
+
+
+@SEARCH_PROFILE_CONTROLLER.get("/select/{user_id}")
+@inject
+async def get_user_search_profiles_select(
+    user_id: UUID,
+    sender: FromDishka[Sender],
+) -> SuccessfulResponse[list[SelectSearchProfileDto]]:
+    query = GetUserSearchProfilesSelectQuery(user_id=UserId(user_id))
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
 

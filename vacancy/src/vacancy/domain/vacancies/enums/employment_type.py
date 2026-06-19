@@ -1,8 +1,8 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class EmploymentType(Enum):
-    FULL_TIME = auto()
-    PART_TIME = auto()
-    CONTRACT = auto()
-    INTERNSHIP = auto()
+    FULL_TIME = "full_time"
+    PART_TIME = "part_time"
+    CONTRACT = "contract"
+    INTERNSHIP = "internship"

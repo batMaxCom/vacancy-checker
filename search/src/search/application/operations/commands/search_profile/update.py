@@ -30,7 +30,7 @@ class UpdateSearchProfileCommandHandler(CommandHandler[UpdateSearchProfileComman
 
     async def handle(self, command: UpdateSearchProfileCommand) -> None:
         search_profile = await self.__search_profile_repository.get(
-            search_profile_id=command.search_profile_id,
+            id=command.search_profile_id,
         )
         search_profile.update_profile(
             name=command.name,

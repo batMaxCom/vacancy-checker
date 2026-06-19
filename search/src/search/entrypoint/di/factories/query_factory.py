@@ -13,6 +13,8 @@ from search.application.operations.queries.search_profile import (
     GetSearchProfileQueryHandler,
     GetUserSearchProfilesQuery,
     GetUserSearchProfilesQueryHandler,
+    GetUserSearchProfilesSelectQuery,
+    GetUserSearchProfilesSelectQueryHandler,
 )
 from search.application.ports.cqrs import BaseRequest, RequestHandler
 from search.infrastructure.mediator import Registry
@@ -23,6 +25,7 @@ QUERY_HANDLERS: list[tuple[type[BaseRequest[Any]], type[RequestHandler[Any, Any]
     (GetSearchProfileQuery, GetSearchProfileQueryHandler),
     (GetUserSearchProfilesQuery, GetUserSearchProfilesQueryHandler),
     (GetActiveProfilesQuery, GetActiveProfilesQueryHandler),
+    (GetUserSearchProfilesSelectQuery, GetUserSearchProfilesSelectQueryHandler),
 ]
 
 

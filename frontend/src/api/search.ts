@@ -1,5 +1,5 @@
 import { SEARCH_API } from './config'
-import type { ApiResponse, SearchProfile, SearchJob } from './types'
+import type { ApiResponse, SearchProfile, SearchJob, SelectItem } from './types'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${SEARCH_API}${path}`, {
@@ -50,6 +50,9 @@ export const searchApi = {
 
   runSearch: (id: string) =>
     request<string>(`/api/v1/search-profiles/${id}/search`, { method: 'POST' }),
+
+  getProfileSelectList: (userId: string) =>
+    request<SelectItem[]>(`/api/v1/search-profiles/select/${userId}`),
 
   getJobs: (profileId: string) =>
     request<SearchJob[]>(`/api/v1/search-profiles/${profileId}/jobs`),

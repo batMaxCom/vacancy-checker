@@ -1,6 +1,7 @@
 import asyncio
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
+from search.application.common.dto import FoundVacancyDto
 from search.application.ports.broker.publisher import EventPublisher
 from search.application.ports.cqrs import Command
 from search.application.ports.cqrs.handlers import CommandHandler
@@ -63,10 +64,10 @@ class RunSearchCommandHandler(CommandHandler[RunSearchCommand, SearchJobId]):
 
         await self.__search_job_repository.update(search_job)
         await self.__transaction_manager.commit()
-        await asyncio.gather(
-            *(
-                self._publisher.publish("vacancy.created", asdict(vacancy))
-                for vacancy in vacancies
-            ),
-        )
+
+        async def _publish(vacancy: FoundVacancyDto) -> None:
+            payload = {**vacancy.to_dict(), "profile_id": str(profile.entity_id)}
+            await self._publisher.publish("vacancy.created", payload)
+
+        await asyncio.gather(*(_publish(v) for v in vacancies))
         return search_job.entity_id
