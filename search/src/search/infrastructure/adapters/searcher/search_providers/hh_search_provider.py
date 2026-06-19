@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import json
+import math
 import re
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -42,6 +44,8 @@ _WORK_FORMAT_MAP: dict[str, WorkFormat] = {
 
 class HHSearchProvider(VacancySearchProvider):
     BASE_URL = "https://hh.ru/search/vacancy"
+    _MAX_PAGES = 50
+    _CONCURRENCY = 3
 
     def __init__(self, client: httpx.AsyncClient | None = None) -> None:
         self._client = client or httpx.AsyncClient(
@@ -164,18 +168,64 @@ class HHSearchProvider(VacancySearchProvider):
                 return name
         return None
 
+    @staticmethod
+    def _raw_to_dto(v: dict) -> FoundVacancyDto:
+        snippet = v.get("snippet")
+        if not isinstance(snippet, dict):
+            snippet = {}
+        company = v.get("company")
+        if not isinstance(company, dict):
+            company = {}
+        links = v.get("links")
+        if not isinstance(links, dict):
+            links = {}
+        return FoundVacancyDto(
+            external_id=str(v["vacancyId"]),
+            title=v.get("name", ""),
+            description=HHSearchProvider._build_description(snippet),
+            company_name=str(company.get("name", "")),
+            url=str(links.get("desktop", "")),
+            source="hh",
+            salary=HHSearchProvider._parse_salary(v.get("compensation")),
+            location=HHSearchProvider._get_location(v),
+            employment_type=HHSearchProvider._parse_employment_type(
+                v.get("employment")
+            ),
+            work_format=HHSearchProvider._parse_work_format(v.get("workFormats")),
+            published_at=HHSearchProvider._parse_datetime(v.get("publicationTime")),
+            created_at=HHSearchProvider._parse_datetime(v.get("creationTime")),
+            updated_at=HHSearchProvider._parse_datetime(v.get("lastChangeTime")),
+        )
+
+    async def _fetch_page(
+        self,
+        params: dict[str, object],
+        page: int,
+    ) -> list[dict]:
+        response = await self._client.get(
+            self.BASE_URL,
+            params={**params, "page": str(page)},  # type: ignore[dict-item]
+        )
+        response.raise_for_status()
+        data = self._extract_json(response.text)
+        if not data:
+            return []
+        return data.get("vacancies") or []
+
     async def search(
         self,
         keywords: list[Keyword],
     ) -> list[FoundVacancyDto]:
+        base_params: dict[str, object] = {
+            "text": " ".join(k.value for k in keywords),
+            "area": "113",
+            "search_field": ["name", "company_name", "description"],
+            "enable_snippets": "true",
+        }
+
         response = await self._client.get(
             self.BASE_URL,
-            params={
-                "text": " ".join(k.value for k in keywords),
-                # "area": "99",
-                "search_field": ["name", "company_name", "description"],
-                "enable_snippets": "true",
-            },
+            params={**base_params, "page": "0"},  # type: ignore[dict-item]
         )
         response.raise_for_status()
 
@@ -183,32 +233,39 @@ class HHSearchProvider(VacancySearchProvider):
         if not data:
             return []
 
-        vacancies = data.get("vacancies") or []
-        results: list[FoundVacancyDto] = []
+        raw_vacancies: list[dict] = list(data.get("vacancies") or [])
+        total_results = data.get("totalResults", 0) or 0
 
-        for v in vacancies:
-            snippet = v.get("snippet") if isinstance(v.get("snippet"), dict) else {}
-            company = v.get("company") if isinstance(v.get("company"), dict) else {}
-            links = v.get("links") if isinstance(v.get("links"), dict) else {}
+        criteria = data.get("criteria")
+        items_per_page = 50
+        if isinstance(criteria, dict):
+            items_per_page = criteria.get("items_on_page", 50) or 50
 
-            results.append(
-                FoundVacancyDto(
-                    external_id=str(v["vacancyId"]),
-                    title=v.get("name", ""),
-                    description=self._build_description(snippet),
-                    company_name=company.get("name", ""),
-                    url=links.get("desktop", ""),
-                    source="hh",
-                    salary=self._parse_salary(v.get("compensation")),
-                    location=self._get_location(v),
-                    employment_type=self._parse_employment_type(
-                        v.get("employment")
-                    ),
-                    work_format=self._parse_work_format(v.get("workFormats")),
-                    published_at=self._parse_datetime(v.get("publicationTime")),
-                    created_at=self._parse_datetime(v.get("creationTime")),
-                    updated_at=self._parse_datetime(v.get("lastChangeTime")),
-                )
+        total_pages = (
+            math.ceil(total_results / items_per_page) if items_per_page > 0 else 1
+        )
+        total_pages = min(total_pages, self._MAX_PAGES)
+
+        if total_pages > 1:
+            sem = asyncio.Semaphore(self._CONCURRENCY)
+
+            async def fetch(p: int) -> list[dict]:
+                async with sem:
+                    return await self._fetch_page(base_params, p)
+
+            tasks = [fetch(p) for p in range(1, total_pages)]
+            page_results: list[list[dict] | BaseException] = await asyncio.gather(
+                *tasks, return_exceptions=True,
             )
 
-        return results
+            seen: set[int] = {v["vacancyId"] for v in raw_vacancies}
+            for result in page_results:
+                if isinstance(result, BaseException):
+                    continue
+                for v in result:
+                    vid = v.get("vacancyId")
+                    if isinstance(vid, int) and vid not in seen:
+                        seen.add(vid)
+                        raw_vacancies.append(v)
+
+        return [self._raw_to_dto(v) for v in raw_vacancies]
