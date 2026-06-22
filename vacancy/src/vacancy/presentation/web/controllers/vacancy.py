@@ -98,6 +98,8 @@ async def create_vacancy(
         location=body.location,
         url=body.url,
         published_at=body.published_at,
+        source=body.source,
+        source_url=body.source_url
     )
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_201_CREATED)

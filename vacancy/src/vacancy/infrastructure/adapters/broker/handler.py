@@ -82,5 +82,7 @@ class KafkaEventHandler(EventHandler):
             salary=salary,
             location=payload.get("location"),
             url=payload["url"],
-            published_at=published_at
+            published_at=published_at,
+            source=payload["source"],
+            source_url=payload["source_url"],
         )

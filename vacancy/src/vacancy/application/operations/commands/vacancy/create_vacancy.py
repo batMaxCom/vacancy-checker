@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from urllib.parse import urlparse
 from uuid import uuid4
 
 from vacancy.application.ports import AsyncTransactionManager, TimeProvider
@@ -29,6 +28,8 @@ class CreateVacancyCommand(Command[None]):
     location: str | None
     url: str
     published_at: datetime | None
+    source: str
+    source_url: str
 
 
 class CreateVacancyCommandHandler(CommandHandler[CreateVacancyCommand, None]):
@@ -47,13 +48,12 @@ class CreateVacancyCommandHandler(CommandHandler[CreateVacancyCommand, None]):
         self.__logger = logger
 
     async def handle(self, command: CreateVacancyCommand) -> None:
-        parsed_url = urlparse(command.url)
-        source = await self.__source_repository.get(name=parsed_url.netloc)
+        source = await self.__source_repository.get(name=command.source)
         if source is None:
             source = Source.create(
                 source_id=SourceId(uuid4()),
-                name=parsed_url.netloc,
-                base_url=f"{parsed_url.scheme}://{parsed_url.netloc}",
+                name=command.source,
+                base_url=command.source_url,
             )
             await self.__source_repository.add(source)
             await self.__transaction_manager.flush()

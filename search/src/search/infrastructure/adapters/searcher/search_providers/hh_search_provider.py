@@ -185,7 +185,8 @@ class HHSearchProvider(VacancySearchProvider):
             description=HHSearchProvider._build_description(snippet),
             company_name=str(company.get("name", "")),
             url=str(links.get("desktop", "")),
-            source="hh",
+            source="hh.ru",
+            source_url="https://hh.ru",
             salary=HHSearchProvider._parse_salary(v.get("compensation")),
             location=HHSearchProvider._get_location(v),
             employment_type=HHSearchProvider._parse_employment_type(

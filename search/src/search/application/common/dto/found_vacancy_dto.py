@@ -30,6 +30,7 @@ class FoundVacancyDto:
     company_name: str
     url: str
     source: str
+    source_url: str
     salary: Salary | None = None
     location: str | None = None
     employment_type: EmploymentType | None = None
@@ -47,6 +48,7 @@ class FoundVacancyDto:
             "company_name",
             "url",
             "source",
+            "source_url",
             "location",
         ):
             d[field_name] = getattr(self, field_name)

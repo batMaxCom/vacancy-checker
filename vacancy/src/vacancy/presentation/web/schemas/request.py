@@ -32,6 +32,8 @@ class CreateVacancyRequest:
     location: str | None
     url: str
     published_at: datetime
+    source: str
+    source_url: str
 
 
 @dataclass(frozen=True)
