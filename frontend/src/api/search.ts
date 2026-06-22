@@ -59,4 +59,7 @@ export const searchApi = {
 
   getJob: (jobId: string) =>
     request<SearchJob>(`/api/v1/search-jobs/${jobId}`),
+
+  deleteJobsByProfile: (profileId: string) =>
+    request<null>(`/api/v1/search-jobs/profile/${profileId}`, { method: 'DELETE' }),
 }

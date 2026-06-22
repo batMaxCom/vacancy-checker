@@ -11,7 +11,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body.result as T
 }
 
-const STATUS_MAP = ['ACTIVE', 'ARCHIVED', 'DELETED']
+const STATUS_MAP: Record<string, string> = {
+  active: 'ACTIVE',
+  archived: 'ARCHIVED',
+  deleted: 'DELETED',
+  viewed: 'VIEWED',
+}
 
 function mapVacancy(r: any): Vacancy {
   return {
@@ -26,7 +31,7 @@ function mapVacancy(r: any): Vacancy {
     salary: r.salary ?? null,
     location: r.location || null,
     url: r.url,
-    status: STATUS_MAP[r.status - 1] ?? 'ACTIVE',
+    status: STATUS_MAP[r.status] ?? 'ACTIVE',
     published_at: r.published_at,
     created_at: r.created_at,
     updated_at: r.updated_at,
@@ -80,6 +85,7 @@ export const vacancyApi = {
   getVacancies: async (page = 1, pageSize = 20, profileId?: string) => {
     const params = new URLSearchParams({ page_number: String(page), page_size: String(pageSize) })
     if (profileId) params.set('profile_id', profileId)
+    ;['ACTIVE', 'ARCHIVED', 'DELETED', 'VIEWED'].forEach(s => params.append('status', s))
     const result = await request<any>(`/vacancy/list/paginated?${params}`)
     return {
       items: (result.records || []).map(mapVacancy),
@@ -114,4 +120,7 @@ export const vacancyApi = {
 
   updateVacancy: (id: string, data: Record<string, unknown>) =>
     request<null>(`/vacancy/${id}`, { method: 'PUT', body: JSON.stringify({ body: data }) }),
+
+  deleteVacanciesByProfile: (profileId: string) =>
+    request<null>(`/vacancy/profile/${profileId}`, { method: 'DELETE' }),
 }

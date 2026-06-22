@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { searchApi } from '../api/search'
+import { vacancyApi } from '../api/vacancy'
 export default function ProfileForm() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -8,6 +9,7 @@ export default function ProfileForm() {
   const [name, setName] = useState('')
   const [keywords, setKeywords] = useState('')
   const [searchInterval, setSearchInterval] = useState(60)
+  const [research, setResearch] = useState(false)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -32,6 +34,11 @@ export default function ProfileForm() {
     try {
       if (isEdit && id) {
         await searchApi.updateProfile(id, { name, keywords: kwList, search_interval_minutes: searchInterval })
+        if (research) {
+          await searchApi.deleteJobsByProfile(id)
+          await vacancyApi.deleteVacanciesByProfile(id)
+          searchApi.runSearch(id)
+        }
         navigate(`/profiles/${id}`)
       } else {
         const userId = localStorage.getItem('userId')
@@ -71,6 +78,14 @@ export default function ProfileForm() {
             <label>Search Interval (minutes)</label>
             <input type="number" value={searchInterval} onChange={e => setSearchInterval(Number(e.target.value))} min={1} />
           </div>
+          {isEdit && (
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input type="checkbox" checked={research} onChange={e => setResearch(e.target.checked)} />
+                Research
+              </label>
+            </div>
+          )}
           <div className="form-actions">
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? 'Saving...' : isEdit ? 'Update' : 'Create'}

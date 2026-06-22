@@ -1,9 +1,11 @@
 from typing import Any, cast
 
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vacancy.domain.vacancies.entity import Vacancy
 from vacancy.domain.vacancies.repository import VacancyRepository
+from vacancy.domain.vacancies.value_objects import ProfileId
 from vacancy.infrastructure.persistence.adapters.common.mixins import FilterMixin, QueryMixin
 from vacancy.infrastructure.persistence.tables import VACANCY_TABLE
 
@@ -26,6 +28,11 @@ class VacancyRepositoryImpl(VacancyRepository, QueryMixin, FilterMixin):
 
     async def delete(self, entity: Vacancy) -> None:
         await self.__session.delete(entity)
+
+    async def delete_by_profile_id(self, profile_id: ProfileId) -> None:
+        await self.__session.execute(
+            delete(VACANCY_TABLE).where(VACANCY_TABLE.c.profile_id == profile_id)
+        )
 
     async def exists(self, **filters: Any) -> bool:
         query = self._get_query(VACANCY_TABLE, ["id"])

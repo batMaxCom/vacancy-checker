@@ -1,6 +1,7 @@
 from dishka import Provider, Scope, provide_all
 
 from search.application.operations.commands.search_job import (
+    DeleteSearchJobsByProfileIdCommandHandler,
     RetrySearchJobCommandHandler,
     RunSearchCommandHandler,
 )
@@ -27,6 +28,7 @@ from search.application.operations.queries.search_profile import (
 COMMAND_HANDLERS: list[type] = [
     RunSearchCommandHandler,
     RetrySearchJobCommandHandler,
+    DeleteSearchJobsByProfileIdCommandHandler,
     ActivateSearchProfileCommandHandler,
     AddKeywordCommandHandler,
     CreateSearchProfileCommandHandler,

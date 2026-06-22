@@ -9,6 +9,8 @@ from vacancy.application.operations.commands.source import (
 from vacancy.application.operations.commands.vacancy import (
     CreateVacancyCommand,
     CreateVacancyCommandHandler,
+    DeleteVacancyByProfileIdCommand,
+    DeleteVacancyByProfileIdCommandHandler,
     UpdateVacancyCommand,
     UpdateVacancyCommandHandler,
 )
@@ -19,6 +21,7 @@ COMMAND_HANDLERS: list[tuple[type[BaseRequest[Any]], type[RequestHandler[Any, An
     (CreateSourceCommand, CreateSourceCommandHandler),
     (UpdateSourceCommand, UpdateSourceCommandHandler),
     (CreateVacancyCommand, CreateVacancyCommandHandler),
+    (DeleteVacancyByProfileIdCommand, DeleteVacancyByProfileIdCommandHandler),
     (UpdateVacancyCommand, UpdateVacancyCommandHandler),
 ]
 

@@ -219,7 +219,6 @@ class HHSearchProvider(VacancySearchProvider):
         base_params: dict[str, object] = {
             "text": " ".join(k.value for k in keywords),
             "area": "113",
-            "search_field": ["name", "company_name", "description"],
             "enable_snippets": "true",
         }
 

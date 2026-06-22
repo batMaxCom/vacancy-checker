@@ -9,6 +9,9 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
 from vacancy.application.common.dto import PaginationDto, VacancyDto
 from vacancy.application.operations.commands.vacancy.create_vacancy import CreateVacancyCommand
+from vacancy.application.operations.commands.vacancy.delete_vacancy import (
+    DeleteVacancyByProfileIdCommand,
+)
 from vacancy.application.operations.commands.vacancy.update_vacancy import UpdateVacancyCommand
 from vacancy.application.operations.queries.vacancy.get_vacancy_by_id import GetVacancyByIdQuery
 from vacancy.application.operations.queries.vacancy.get_vacancy_by_paginated import (
@@ -43,10 +46,13 @@ async def get_vacancy_paginated(
     page_number: Annotated[int | None, Query()] = None,
     page_size: Annotated[int | None, Query()] = None,
     profile_id: Annotated[uuid.UUID | None, Query()] = None,
+    status: Annotated[list[str] | None, Query()] = None,
 ) -> SuccessfulResponse:
     filters: dict[str, Any] = {}
     if profile_id is not None:
         filters["profile_id"] = ProfileId(profile_id)
+    if status is not None:
+        filters["status__in"] = status
     query = GetVacancyByPaginatedQuery(
         pagination=PaginationDto(
             page_number=page_number if page_number is not None else config.page_number,
@@ -131,5 +137,16 @@ async def update_vacancy(
         url=body.url,
         status=VacancyStatus[body.status] if body.status else None,
     )
+    await sender.send(command)
+    return SuccessfulResponse(status_code=HTTP_200_OK)
+
+
+@VACANCY_CONTROLLER.delete("/profile/{profile_id}")
+@inject
+async def delete_vacancy_by_profile_id(
+    profile_id: uuid.UUID,
+    sender: FromDishka[Sender],
+) -> SuccessfulResponse[None]:
+    command = DeleteVacancyByProfileIdCommand(profile_id=ProfileId(profile_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)

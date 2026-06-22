@@ -5,3 +5,4 @@ class VacancyStatus(Enum):
     ACTIVE = "active"
     ARCHIVED = "archived"
     DELETED = "deleted"
+    VIEWED = "viewed"

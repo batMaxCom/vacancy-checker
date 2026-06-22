@@ -1,6 +1,8 @@
 from typing import Any
 
 from search.application.operations.commands.search_job import (
+    DeleteSearchJobsByProfileIdCommand,
+    DeleteSearchJobsByProfileIdCommandHandler,
     RetrySearchJobCommand,
     RetrySearchJobCommandHandler,
     RunSearchCommand,
@@ -28,6 +30,7 @@ from search.infrastructure.mediator.registry import Registry
 COMMAND_HANDLERS: list[tuple[type[BaseRequest[Any]], type[RequestHandler[Any, Any]]]] = [
     (RunSearchCommand, RunSearchCommandHandler),
     (RetrySearchJobCommand, RetrySearchJobCommandHandler),
+    (DeleteSearchJobsByProfileIdCommand, DeleteSearchJobsByProfileIdCommandHandler),
     (ActivateSearchProfileCommand, ActivateSearchProfileCommandHandler),
     (AddKeywordCommand, AddKeywordCommandHandler),
     (CreateSearchProfileCommand, CreateSearchProfileCommandHandler),

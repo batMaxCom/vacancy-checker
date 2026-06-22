@@ -55,6 +55,8 @@ class UpdateVacancyCommandHandler(CommandHandler[UpdateVacancyCommand, None]):
             vacancy.activate()
         elif command.status is VacancyStatus.DELETED:
             vacancy.delete()
+        elif command.status is VacancyStatus.VIEWED:
+            vacancy.viewed()
 
         await self.__vacancy_repository.update(vacancy)
         await self.__transaction_manager.commit()

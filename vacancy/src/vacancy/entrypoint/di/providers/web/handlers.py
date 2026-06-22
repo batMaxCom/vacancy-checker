@@ -6,6 +6,7 @@ from vacancy.application.operations.commands.source import (
 )
 from vacancy.application.operations.commands.vacancy import (
     CreateVacancyCommandHandler,
+    DeleteVacancyByProfileIdCommandHandler,
     UpdateVacancyCommandHandler,
 )
 from vacancy.application.operations.queries.source import (
@@ -22,6 +23,7 @@ COMMAND_HANDLERS: list[type] = [
     CreateSourceCommandHandler,
     UpdateSourceCommandHandler,
     CreateVacancyCommandHandler,
+    DeleteVacancyByProfileIdCommandHandler,
     UpdateVacancyCommandHandler,
 ]
 

@@ -30,6 +30,7 @@ class SearchJobGatewayImpl(QueryMixin, FilterMixin, SearchJobGateway):
 
     async def get_by_profile_id(self, profile_id: SearchProfileId) -> list[SearchJobDto]:
         query = self._get_query(SEARCH_JOB_TABLE)
+        query = query.order_by(SEARCH_JOB_TABLE.c.started_at.desc())
         query = self._add_filters(SEARCH_JOB_TABLE, query, profile_id=profile_id)
         result = await self.__session.execute(query)
         rows = result.all()

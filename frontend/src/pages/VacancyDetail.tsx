@@ -13,7 +13,14 @@ export default function VacancyDetail() {
     if (!id) return
     setLoading(true)
     vacancyApi.getVacancy(id)
-      .then(setVacancy)
+      .then(v => {
+        setVacancy(v)
+        if (v.status === 'ACTIVE') {
+          vacancyApi.updateVacancy(id, { status: 'VIEWED' })
+            .then(() => setVacancy(prev => prev ? { ...prev, status: 'VIEWED' } : prev))
+            .catch(() => {})
+        }
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }, [id])

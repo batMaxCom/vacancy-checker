@@ -77,7 +77,7 @@ class VacancyGatewayImpl(VacancyGateway, FilterMixin, PaginationMixin):
         base_query = self._add_query_offset_and_limit(
             base_query, pagination.page_number, pagination.page_size
         )
-
+        base_query = base_query.order_by(VACANCY_TABLE.c.created_at.desc())
         result = await self.__session.execute(base_query)
         rows = result.all()
 

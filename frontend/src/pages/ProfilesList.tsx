@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { searchApi } from '../api/search'
+import { vacancyApi } from '../api/vacancy'
 import type { SearchProfile } from '../api/types'
 
 export default function ProfilesList() {
@@ -30,6 +31,7 @@ export default function ProfilesList() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this profile?')) return
     try {
+      await vacancyApi.deleteVacanciesByProfile(id)
       await searchApi.deleteProfile(id)
       setProfiles(p => p.filter(x => x.id !== id))
     } catch (e: any) {

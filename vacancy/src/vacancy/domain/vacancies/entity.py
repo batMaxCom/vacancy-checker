@@ -112,6 +112,9 @@ class Vacancy(Entity[VacancyId]):
     def delete(self) -> None:
         self._status = VacancyStatus.DELETED
 
+    def viewed(self) -> None:
+        self._status = VacancyStatus.VIEWED
+
     def update_details(
         self,
         title: str | None = None,
