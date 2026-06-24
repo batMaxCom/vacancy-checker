@@ -1,0 +1,34 @@
+[project]
+name = "auth"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "confluent-kafka>=2.14.2",
+    "dishka>=1.10.1",
+    "fastapi>=0.137.0",
+    "pyjwt>=2.13.0",
+    "sqlalchemy>=2.0.50",
+    "structlog>=26.1.0",
+    "uvicorn>=0.49.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+    "ruff>=0.15.17",
+]
+
+[project.scripts]
+auth-cli = "auth.entrypoint.web.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"auth.infrastructure.persistence.alembic" = ["alembic.ini"]

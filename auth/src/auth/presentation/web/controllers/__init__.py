@@ -1,0 +1,11 @@
+from .auth import AUTH_CONTROLLER
+from .healthcheck import HEALTHCHECK_CONTROLLER
+from .introspection import INTROSPECTION_CONTROLLER
+from .registration import REGISTRATION_CONTROLLER
+
+__all__ = (
+    "AUTH_CONTROLLER",
+    "HEALTHCHECK_CONTROLLER",
+    "INTROSPECTION_CONTROLLER",
+    "REGISTRATION_CONTROLLER",
+)
