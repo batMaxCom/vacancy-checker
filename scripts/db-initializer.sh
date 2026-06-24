@@ -3,6 +3,7 @@
 # Параметры подключения к PostgreSQL
 DB_NAME_VACANCY=${VACANCY_DATABASE}
 DB_NAME_SEARCH=${SEARCH_DATABASE}
+DB_NAME_USER=${USER_DB}
 
 DB_USER=${POSTGRES_USER}
 
@@ -34,3 +35,4 @@ check_and_create_db() {
 # Вызываем функцию для каждой базы данных
 check_and_create_db "${DB_NAME_VACANCY}"
 check_and_create_db "${DB_NAME_SEARCH}"
+check_and_create_db "${DB_NAME_USER}"

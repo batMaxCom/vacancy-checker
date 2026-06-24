@@ -21,4 +21,6 @@ venv
 pgdata
 docker-compose.yml
 docker-compose.override.yml
-project.egg-info
+*.egg-info
+*.session
+*.session-journal

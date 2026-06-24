@@ -34,6 +34,6 @@ def web_container(
         context={
             AppConfig: app_config,
             PostgresConfig: db_config,
-            KafkaConfig: broker_config
+            KafkaConfig: broker_config,
         }
     )
