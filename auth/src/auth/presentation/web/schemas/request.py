@@ -11,6 +11,8 @@ class LoginRequest:
 class RegisterRequest:
     email: str
     password: str
+    first_name: str
+    last_name: str
 
 
 @dataclass(frozen=True)

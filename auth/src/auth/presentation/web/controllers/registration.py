@@ -9,6 +9,7 @@ from auth.application.operations.commands.credential import CreateUserCredential
 from auth.application.ports.cqrs import Sender
 from auth.domain.common.value_objects import UserId
 from auth.domain.credential.value_objects import Email
+from auth.domain.shared_kernel.value_objects import FirstName, LastName
 from auth.presentation.web.schemas.base import SuccessfulResponse
 from auth.presentation.web.schemas.request import RegisterRequest
 
@@ -26,6 +27,8 @@ async def register(
         user_id=UserId(uuid4()),
         email=Email(body.email),
         password=body.password,
+        first_name=FirstName(body.first_name),
+        last_name=LastName(body.last_name),
     )
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_201_CREATED)

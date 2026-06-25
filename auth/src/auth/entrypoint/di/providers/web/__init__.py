@@ -1,4 +1,5 @@
 from .application import ApplicationAdaptersProvider
+from .broker import BrokerProvider
 from .config import WebConfigProvider
 from .domain import DomainAdaptersProvider
 from .fastapi import FastapiProvider
@@ -13,6 +14,7 @@ __all__ = (
     "WebPersistenceProvider",
     "DomainAdaptersProvider",
     "ApplicationAdaptersProvider",
+    "BrokerProvider",
     "FastapiProvider",
     "HandlersProvider",
     "LoggerAdapterProvider",

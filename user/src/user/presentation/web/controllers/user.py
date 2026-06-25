@@ -4,13 +4,12 @@ from typing import Annotated
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
 from fastapi import APIRouter, Body, Query
-from starlette.status import HTTP_200_OK, HTTP_201_CREATED
+from starlette.status import HTTP_200_OK
 
 from user.application.common.dto import Pagination, PaginationResult, UserBriefDTO, UserDTO
 from user.application.operations.commands.user import (
     ActivateUserCommand,
     ChangeRoleCommand,
-    CreateUserCommand,
     DeleteUserCommand,
     SuspendUserCommand,
     UpdateProfileCommand,
@@ -21,11 +20,10 @@ from user.application.operations.queries.user import (
     GetUsersQuery,
 )
 from user.application.ports.cqrs import Sender
-from user.domain.user.value_objects import AvatarUrl, Email, FirstName, LastName, UserId, UserRole
+from user.domain.user.value_objects import AvatarUrl, FirstName, LastName, UserId, UserRole
 from user.presentation.web.schemas.base import SuccessfulResponse
 from user.presentation.web.schemas.request import (
     ChangeRoleRequest,
-    CreateUserRequest,
     UpdateProfileRequest,
 )
 
@@ -75,21 +73,21 @@ async def get_user_by_id(
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
 
 
-@USER_CONTROLLER.post("")
-@inject
-async def create_user(
-    body: Annotated[CreateUserRequest, Body(embed=True)],
-    *,
-    sender: FromDishka[Sender],
-) -> SuccessfulResponse[None]:
-    command = CreateUserCommand(
-        user_id=UserId(uuid.uuid4()),
-        email=Email(body.email),
-        first_name=FirstName(body.first_name),
-        last_name=LastName(body.last_name),
-    )
-    await sender.send(command)
-    return SuccessfulResponse(status_code=HTTP_201_CREATED)
+# @USER_CONTROLLER.post("")
+# @inject
+# async def create_user(
+#     body: Annotated[CreateUserRequest, Body(embed=True)],
+#     *,
+#     sender: FromDishka[Sender],
+# ) -> SuccessfulResponse[None]:
+#     command = CreateUserCommand(
+#         user_id=UserId(uuid.uuid4()),
+#         email=Email(body.email),
+#         first_name=FirstName(body.first_name),
+#         last_name=LastName(body.last_name),
+#     )
+#     await sender.send(command)
+#     return SuccessfulResponse(status_code=HTTP_201_CREATED)
 
 
 @USER_CONTROLLER.patch("/{user_id}/profile")

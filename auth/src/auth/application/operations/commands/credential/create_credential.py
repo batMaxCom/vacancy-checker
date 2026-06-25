@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 
 from auth.application.ports import AsyncTransactionManager, Logger, TimeProvider
+from auth.application.ports.broker import EventProducer
 from auth.application.ports.cqrs import Command, CommandHandler
 from auth.application.ports.password_hasher import PasswordHasher
 from auth.domain.common.value_objects import UserId
 from auth.domain.credential.entity import UserCredential
 from auth.domain.credential.repository import CredentialRepository
 from auth.domain.credential.value_objects import Email, PasswordHash, PasswordSalt
+from auth.domain.shared_kernel.value_objects import FirstName, LastName
 
 
 @dataclass(frozen=True, slots=True)
@@ -14,6 +16,8 @@ class CreateUserCredentialCommand(Command[None]):
     user_id: UserId
     email: Email
     password: str
+    first_name: FirstName
+    last_name: LastName
 
 
 class CreateUserCredentialCommandHandler(CommandHandler[CreateUserCredentialCommand, None]):
@@ -22,12 +26,14 @@ class CreateUserCredentialCommandHandler(CommandHandler[CreateUserCredentialComm
         credential_repository: CredentialRepository,
         password_hasher: PasswordHasher,
         transaction_manager: AsyncTransactionManager,
+        event_producer: EventProducer,
         time_provider: TimeProvider,
         logger: Logger,
     ) -> None:
         self.__credential_repository = credential_repository
         self.__password_hasher = password_hasher
         self.__transaction_manager = transaction_manager
+        self.__event_producer = event_producer
         self.__time_provider = time_provider
         self.__logger = logger
 
@@ -51,4 +57,13 @@ class CreateUserCredentialCommandHandler(CommandHandler[CreateUserCredentialComm
             event="CREATE_USER_CREDENTIAL_COMMAND",
             user_id=str(command.user_id),
             email=command.email.value,
+        )
+        await self.__event_producer.publish(
+            routing_key="user.created",
+            message={
+                "user_id": str(command.user_id),
+                "email": command.email.value,
+                "first_name": command.first_name.value,
+                "last_name": command.last_name.value,
+            },
         )

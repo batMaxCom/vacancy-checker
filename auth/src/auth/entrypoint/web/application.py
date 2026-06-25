@@ -95,6 +95,7 @@ def app_factory() -> FastAPI:
         app_config=config.app_config,
         auth_settings=config.auth_settings,
         db_config=config.db_config,
+        broker_config=config.broker_config,
     )
     application = setup_application(config.app_config)
     setup_middleware(application, config.app_config)
