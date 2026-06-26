@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from search.domain.common.value_objects import UserId
 from search.domain.events.base_event import DomainEvent
 from search.domain.search_profile.value_objects import SearchProfileId
+from search.domain.shared_kernel.value_objects import UserId
 
 
 @dataclass(frozen=True, slots=True)

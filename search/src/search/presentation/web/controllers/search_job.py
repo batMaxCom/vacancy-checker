@@ -10,6 +10,7 @@ from search.application.operations.commands.search_job import (
     DeleteSearchJobsByProfileIdCommand,
 )
 from search.application.operations.queries.search_job import GetSearchJobQuery
+from search.application.ports.auth import AuthenticateProcessor
 from search.application.ports.cqrs import Sender
 from search.domain.search_job.value_objects import SearchJobId
 from search.domain.search_profile.value_objects import SearchProfileId
@@ -25,7 +26,9 @@ SEARCH_JOB_CONTROLLER = APIRouter(
 async def get_search_job_by_id(
     job_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor],
 ) -> SuccessfulResponse[SearchJobDto | None]:
+    await auth_processor.process()
     query = GetSearchJobQuery(search_job_id=SearchJobId(job_id))
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
@@ -36,7 +39,9 @@ async def get_search_job_by_id(
 async def delete_search_jobs_by_profile_id(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor],
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = DeleteSearchJobsByProfileIdCommand(
         profile_id=SearchProfileId(profile_id),
     )

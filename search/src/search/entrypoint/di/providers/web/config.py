@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, from_context
 
-from search.entrypoint.web.config import AppConfig, PostgresConfig
+from search.entrypoint.web.config import AppConfig, AuthConfig, PostgresConfig
 
 
 class WebConfigProvider(Provider):
@@ -9,4 +9,5 @@ class WebConfigProvider(Provider):
     scope = Scope.APP
 
     app_config = from_context(AppConfig)
+    auth_config = from_context(AuthConfig)
     db_config = from_context(PostgresConfig)

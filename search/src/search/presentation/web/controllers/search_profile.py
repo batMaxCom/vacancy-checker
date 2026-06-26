@@ -24,10 +24,11 @@ from search.application.operations.queries.search_profile import (
     GetUserSearchProfilesQuery,
     GetUserSearchProfilesSelectQuery,
 )
+from search.application.ports.auth import AuthenticateProcessor
 from search.application.ports.cqrs import Sender
-from search.domain.common.value_objects import UserId
 from search.domain.search_job.value_objects import SearchJobId
 from search.domain.search_profile.value_objects import SearchProfileId
+from search.domain.shared_kernel.value_objects import UserId
 from search.presentation.web.schemas import (
     CreateSearchProfileRequest,
     SuccessfulResponse,
@@ -44,9 +45,10 @@ SEARCH_PROFILE_CONTROLLER = APIRouter(
 async def create_search_profile(
     body: CreateSearchProfileRequest,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[SearchProfileId]:
+    await auth_processor.process()
     command = CreateSearchProfileCommand(
-        user_id=UserId(body.user_id),
         name=body.name,
         keywords=body.keywords,
         search_interval_minutes=body.search_interval_minutes,
@@ -58,21 +60,23 @@ async def create_search_profile(
 @SEARCH_PROFILE_CONTROLLER.get("")
 @inject
 async def get_user_search_profiles(
-    user_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[list[SearchProfileDto]]:
-    query = GetUserSearchProfilesQuery(user_id=UserId(user_id))
+    await auth_processor.process()
+    query = GetUserSearchProfilesQuery()
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
 
 
-@SEARCH_PROFILE_CONTROLLER.get("/select/{user_id}")
+@SEARCH_PROFILE_CONTROLLER.get("/select")
 @inject
 async def get_user_search_profiles_select(
-    user_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[list[SelectSearchProfileDto]]:
-    query = GetUserSearchProfilesSelectQuery(user_id=UserId(user_id))
+    await auth_processor.process()
+    query = GetUserSearchProfilesSelectQuery()
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
 
@@ -82,7 +86,9 @@ async def get_user_search_profiles_select(
 async def get_search_profile_by_id(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[SearchProfileDto | None]:
+    await auth_processor.process()
     query = GetSearchProfileQuery(
         search_profile_id=SearchProfileId(profile_id),
     )
@@ -96,7 +102,9 @@ async def update_search_profile(
     profile_id: UUID,
     body: UpdateSearchProfileRequest,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = UpdateSearchProfileCommand(
         search_profile_id=SearchProfileId(profile_id),
         name=body.name,
@@ -112,7 +120,9 @@ async def update_search_profile(
 async def delete_search_profile(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = DeleteSearchProfileCommand(
         search_profile_id=SearchProfileId(profile_id),
     )
@@ -125,7 +135,9 @@ async def delete_search_profile(
 async def activate_search_profile(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = ActivateSearchProfileCommand(
         search_profile_id=SearchProfileId(profile_id),
     )
@@ -138,7 +150,9 @@ async def activate_search_profile(
 async def deactivate_search_profile(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = DeactivateSearchProfileCommand(
         search_profile_id=SearchProfileId(profile_id),
     )
@@ -151,7 +165,9 @@ async def deactivate_search_profile(
 async def run_search(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[SearchJobId]:
+    await auth_processor.process()
     command = RunSearchCommand(profile_id=SearchProfileId(profile_id))
     result = await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_201_CREATED, result=result)
@@ -162,7 +178,9 @@ async def run_search(
 async def get_profile_jobs(
     profile_id: UUID,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[list[SearchJobDto]]:
+    await auth_processor.process()
     query = GetProfileJobsQuery(profile_id=SearchProfileId(profile_id))
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)

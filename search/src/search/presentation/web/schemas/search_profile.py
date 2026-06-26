@@ -4,7 +4,6 @@ from uuid import UUID
 
 @dataclass(frozen=True)
 class CreateSearchProfileRequest:
-    user_id: UUID
     name: str
     keywords: list[str]
     search_interval_minutes: int

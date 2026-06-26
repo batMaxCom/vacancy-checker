@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from search.application.common.dto.search_profile_dto import KeywordDto, SearchProfileDto
 from search.application.ports.gateways import SearchProfileGateway
-from search.domain.common.value_objects import UserId
 from search.domain.search_profile.value_objects import Keyword, SearchProfileId
+from search.domain.shared_kernel.value_objects import UserId
 from search.infrastructure.persistence.adapters.common.mixins import FilterMixin, QueryMixin
 from search.infrastructure.persistence.tables import SEARCH_PROFILE_TABLE
 

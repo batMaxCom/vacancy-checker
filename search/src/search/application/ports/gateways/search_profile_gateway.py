@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from search.application.common.dto.search_profile_dto import SearchProfileDto
-from search.domain.common.value_objects import UserId
 from search.domain.search_profile.value_objects import SearchProfileId
+from search.domain.shared_kernel.value_objects import UserId
 
 
 class SearchProfileGateway(ABC):
