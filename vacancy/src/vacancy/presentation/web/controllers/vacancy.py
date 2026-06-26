@@ -17,6 +17,7 @@ from vacancy.application.operations.queries.vacancy.get_vacancy_by_id import Get
 from vacancy.application.operations.queries.vacancy.get_vacancy_by_paginated import (
     GetVacancyByPaginatedQuery,
 )
+from vacancy.application.ports.auth import AuthenticateProcessor
 from vacancy.application.ports.cqrs import Sender
 from vacancy.domain.vacancies.enums import EmploymentType, VacancyStatus, WorkFormat
 from vacancy.domain.vacancies.value_objects import ProfileId, Salary, VacancyId
@@ -31,8 +32,11 @@ VACANCY_CONTROLLER = APIRouter(prefix="/vacancy", tags=["vacancy"])
 @inject
 async def get_vacancy_by_id(
     vacancy_id: uuid.UUID,
+    *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[VacancyDto | None]:
+    await auth_processor.process()
     query = GetVacancyByIdQuery(vacancy_id=VacancyId(vacancy_id))
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
@@ -41,13 +45,16 @@ async def get_vacancy_by_id(
 @VACANCY_CONTROLLER.get("/list/paginated")
 @inject
 async def get_vacancy_paginated(
-    sender: FromDishka[Sender],
-    config: FromDishka[AppConfig],
     page_number: Annotated[int | None, Query()] = None,
     page_size: Annotated[int | None, Query()] = None,
     profile_id: Annotated[uuid.UUID | None, Query()] = None,
     status: Annotated[list[str] | None, Query()] = None,
+    *,
+    sender: FromDishka[Sender],
+    config: FromDishka[AppConfig],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse:
+    await auth_processor.process()
     filters: dict[str, Any] = {}
     if profile_id is not None:
         filters["profile_id"] = ProfileId(profile_id)
@@ -68,8 +75,11 @@ async def get_vacancy_paginated(
 @inject
 async def create_vacancy(
     body: Annotated[CreateVacancyRequest, Body(embed=True)],
+    *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     salary: Salary | None = None
     if body.salary_min_amount is not None or body.salary_max_amount is not None:
         salary = Salary(
@@ -110,8 +120,11 @@ async def create_vacancy(
 async def update_vacancy(
     vacancy_id: uuid.UUID,
     body: Annotated[UpdateVacancyRequest, Body(embed=True)],
+    *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     salary: Salary | None = None
     if body.salary_min_amount is not None or body.salary_max_amount is not None:
         salary = Salary(
@@ -147,8 +160,11 @@ async def update_vacancy(
 @inject
 async def delete_vacancy_by_profile_id(
     profile_id: uuid.UUID,
+    *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = DeleteVacancyByProfileIdCommand(profile_id=ProfileId(profile_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)

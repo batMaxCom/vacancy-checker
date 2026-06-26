@@ -9,15 +9,16 @@ from vacancy.entrypoint.di.providers.web import (
     LoggerAdapterProvider,
     MediatorProvider,
     WebConfigProvider,
-    WebPersistenceProvider,
+    WebPersistenceProvider, AuthAdaptersProvider,
 )
-from vacancy.entrypoint.web.config import AppConfig, KafkaConfig, PostgresConfig
+from vacancy.entrypoint.web.config import AppConfig, KafkaConfig, PostgresConfig, AuthConfig
 
 
 def web_container(
         app_config: AppConfig,
         db_config: PostgresConfig,
-        broker_config: KafkaConfig
+        broker_config: KafkaConfig,
+        auth_config: AuthConfig,
 ) -> AsyncContainer:
     return make_async_container(
         MediatorProvider(),
@@ -25,12 +26,14 @@ def web_container(
         WebPersistenceProvider(),
         DomainAdaptersProvider(),
         ApplicationAdaptersProvider(),
+        AuthAdaptersProvider(),
         FastapiProvider(),
         HandlersProvider(),
         LoggerAdapterProvider(),
         KafkaBrokerProvider(),
         context={
             AppConfig: app_config,
+            AuthConfig: auth_config,
             PostgresConfig: db_config,
             KafkaConfig: broker_config
         }
