@@ -1,15 +1,8 @@
 import { VACANCY_API } from './config'
-import type { ApiResponse, PaginationResult, SelectItem, Source, Vacancy } from './types'
+import type { PaginationResult, SelectItem, Source, Vacancy } from './types'
+import { createHttpClient } from './http'
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${VACANCY_API}${path}`, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-  })
-  const body: ApiResponse<T> = await res.json()
-  if (!res.ok) throw new Error((body as any).error ?? `HTTP ${res.status}`)
-  return body.result as T
-}
+const request = createHttpClient(VACANCY_API)
 
 const STATUS_MAP: Record<string, string> = {
   active: 'ACTIVE',

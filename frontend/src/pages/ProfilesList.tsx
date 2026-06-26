@@ -8,25 +8,15 @@ export default function ProfilesList() {
   const [profiles, setProfiles] = useState<SearchProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [userId, setUserId] = useState(() => localStorage.getItem('userId') ?? '')
 
-  const load = (uid: string) => {
-    if (!uid) { setProfiles([]); setLoading(false); return }
+  useEffect(() => {
     setLoading(true)
     setError('')
-    searchApi.getProfiles(uid)
+    searchApi.getProfiles()
       .then(setProfiles)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
-  }
-
-  useEffect(() => { load(userId) }, [])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    localStorage.setItem('userId', userId)
-    load(userId)
-  }
+  }, [])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this profile?')) return
@@ -46,19 +36,11 @@ export default function ProfilesList() {
         <Link to="/profiles/new" className="btn btn-primary">+ New Profile</Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end', padding: 16 }}>
-        <div className="form-group" style={{ margin: 0, flex: 1 }}>
-          <label>User ID</label>
-          <input value={userId} onChange={e => setUserId(e.target.value)} placeholder="Enter user UUID" />
-        </div>
-        <button type="submit" className="btn btn-primary">Load</button>
-      </form>
-
       {error && <div className="error-msg">{error}</div>}
 
       {loading ? <div className="loading">Loading...</div> : profiles.length === 0 ? (
         <div className="empty">
-          <p>No profiles found{userId ? ' for this user' : ''}</p>
+          <p>No profiles found</p>
         </div>
       ) : (
         <div className="card" style={{ padding: 0 }}>

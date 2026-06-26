@@ -14,7 +14,11 @@ from user.entrypoint.di.containers import web_container
 from user.entrypoint.web.config import AppConfig, get_web_config
 from user.infrastructure.adapters.logger import setup_logging
 from user.infrastructure.persistence.tables import setup_mapping
-from user.presentation.web.controllers import HEALTHCHECK_CONTROLLER, USER_CONTROLLER
+from user.presentation.web.controllers import (
+    HEALTHCHECK_CONTROLLER,
+    PROFILE_CONTROLLER,
+    USER_CONTROLLER,
+)
 from user.presentation.web.exceptions.setup import (
     setup_application_error_handler,
     setup_domain_error_handler,
@@ -84,6 +88,7 @@ def setup_middleware(application: FastAPI, config: AppConfig) -> None:
 def setup_controllers(application: FastAPI) -> None:
     application.include_router(HEALTHCHECK_CONTROLLER)
     application.include_router(USER_CONTROLLER)
+    application.include_router(PROFILE_CONTROLLER)
 
 def app_factory() -> FastAPI:
     config = get_web_config()

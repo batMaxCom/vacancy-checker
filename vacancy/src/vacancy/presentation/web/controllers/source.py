@@ -23,7 +23,7 @@ from vacancy.entrypoint.web.config import AppConfig
 from vacancy.presentation.web.schemas.base import SuccessfulResponse
 from vacancy.presentation.web.schemas.request import CreateSourceRequest, UpdateSourceRequest
 
-SOURCE_CONTROLLER = APIRouter(prefix="/source", tags=["source"])
+SOURCE_CONTROLLER = APIRouter(prefix="/source", tags=["Source"])
 
 
 @SOURCE_CONTROLLER.get("/{source_id}")

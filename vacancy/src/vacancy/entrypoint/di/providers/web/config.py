@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, from_context
 
-from vacancy.entrypoint.web.config import AppConfig, PostgresConfig, AuthConfig
+from vacancy.entrypoint.web.config import AppConfig, AuthConfig, PostgresConfig
 
 
 class WebConfigProvider(Provider):

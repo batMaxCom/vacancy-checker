@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useAuth } from '../auth/AuthContext'
 import { searchApi } from '../api/search'
 import { vacancyApi } from '../api/vacancy'
 
 export default function Home() {
+  const { user } = useAuth()
   const [health, setHealth] = useState({ search: '?', vacancy: '?' })
 
   useEffect(() => {
     Promise.allSettled([
-      searchApi.getProfiles('00000000-0000-0000-0000-000000000000').then(() => {}),
+      searchApi.getProfiles().then(() => {}),
       vacancyApi.getSources(1, 1).then(() => {}),
     ]).then(([s, v]) => {
       setHealth({
@@ -20,6 +22,9 @@ export default function Home() {
   return (
     <div>
       <div className="page-header"><h2>Dashboard</h2></div>
+      <div className="card" style={{ marginBottom: 16 }}>
+        <p>Welcome, <strong>{user?.id}</strong></p>
+      </div>
       <div style={{ display: 'flex', gap: 16 }}>
         <div className="card" style={{ flex: 1 }}>
           <h3>Search Service</h3>

@@ -28,11 +28,17 @@ class AuthenticateProcessorImpl(AuthenticateProcessor):
         self.__auth_config = auth_config
 
     async def process(self) -> None:
-
+        if not (access_token := self.__request.headers.get("X-Access-Token")):
+            raise ApplicationError(
+                type=ApplicationTypeError.UNAUTHORIZED,
+                message=UNAUTHENTICATED,
+            )
         try:
             response = await self.__client.get(
                 url=self.__auth_config.authenticate_url,
-                headers=self.__request.headers
+                headers={
+                    "X-Access-Token": access_token
+                }
             )
             response.raise_for_status()
             response_json = response.json().get("result")
@@ -47,13 +53,13 @@ class AuthenticateProcessorImpl(AuthenticateProcessor):
             raise ApplicationError(
                 type=ApplicationTypeError.UNAUTHORIZED,
                 message=AUTH_SERVICE_UNAVAILABLE,
-            )
+            ) from error
 
         except HTTPStatusError:
             raise ApplicationError(
                 type=ApplicationTypeError.UNAUTHORIZED,
                 message=INVALID_TOKEN,
-            )
+            ) from None
         else:
             if not response_json.get("expires_at"):
                 raise ApplicationError(

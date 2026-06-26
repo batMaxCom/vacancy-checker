@@ -34,16 +34,13 @@ export default function VacanciesList() {
   }
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    if (userId) {
-      searchApi.getProfileSelectList(userId)
-        .then(items => {
-          const mapped: SelectItem[] = items.map((i: any) => ({ value: i.id ?? i.value, label: i.name ?? i.label }))
-          const sorted = [...mapped].sort((a, b) => a.label.localeCompare(b.label))
-          setProfiles(sorted)
-        })
-        .catch(() => {})
-    }
+    searchApi.getProfileSelectList()
+      .then(items => {
+        const mapped: SelectItem[] = items.map((i: any) => ({ value: i.id ?? i.value, label: i.name ?? i.label }))
+        const sorted = [...mapped].sort((a, b) => a.label.localeCompare(b.label))
+        setProfiles(sorted)
+      })
+      .catch(() => {})
     load(1)
   }, [])
 

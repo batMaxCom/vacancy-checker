@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from functools import lru_cache
 
-from vacancy.entrypoint.web.config import KafkaConfig, AuthConfig
+from vacancy.entrypoint.web.config import AuthConfig, KafkaConfig
 from vacancy.entrypoint.web.config.app import AppConfig
 from vacancy.entrypoint.web.config.db import PostgresConfig
 

@@ -41,10 +41,7 @@ export default function ProfileForm() {
         }
         navigate(`/profiles/${id}`)
       } else {
-        const userId = localStorage.getItem('userId')
-        if (!userId) { alert('Enter a User ID on the profiles page first'); return }
         const newId = await searchApi.createProfile({
-          user_id: userId,
           name,
           keywords: kwList,
           search_interval_minutes: searchInterval,

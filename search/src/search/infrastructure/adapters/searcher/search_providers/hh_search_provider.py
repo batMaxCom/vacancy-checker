@@ -200,12 +200,12 @@ class HHSearchProvider(VacancySearchProvider):
 
     async def _fetch_page(
         self,
-        params: dict[str, object],
+        params: dict[str, str],
         page: int,
     ) -> list[dict]:
         response = await self._client.get(
             self.BASE_URL,
-            params={**params, "page": str(page)},  # type: ignore[dict-item]
+            params={**params, "page": str(page)},
         )
         response.raise_for_status()
         data = self._extract_json(response.text)
@@ -217,7 +217,7 @@ class HHSearchProvider(VacancySearchProvider):
         self,
         keywords: list[Keyword],
     ) -> list[FoundVacancyDto]:
-        base_params: dict[str, object] = {
+        base_params: dict[str, str] = {
             "text": " ".join(k.value for k in keywords),
             "area": "113",
             "enable_snippets": "true",
@@ -225,7 +225,7 @@ class HHSearchProvider(VacancySearchProvider):
 
         response = await self._client.get(
             self.BASE_URL,
-            params={**base_params, "page": "0"},  # type: ignore[dict-item]
+            params={**base_params, "page": "0"},
         )
         response.raise_for_status()
 

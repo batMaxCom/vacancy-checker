@@ -4,6 +4,7 @@ from user.application.operations.commands.user import (
     ActivateUserCommandHandler,
     ChangeRoleCommandHandler,
     CreateUserCommandHandler,
+    DeleteUserByIdCommandHandler,
     DeleteUserCommandHandler,
     SuspendUserCommandHandler,
     UpdateProfileCommandHandler,
@@ -20,7 +21,8 @@ COMMAND_HANDLERS: list[type] = [
     ChangeRoleCommandHandler,
     ActivateUserCommandHandler,
     SuspendUserCommandHandler,
-    DeleteUserCommandHandler,
+    DeleteUserByIdCommandHandler,
+    DeleteUserCommandHandler
 ]
 
 QUERY_HANDLERS: list[type] = [

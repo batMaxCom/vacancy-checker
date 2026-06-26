@@ -4,9 +4,9 @@ from uuid import UUID
 from starlette.requests import Request
 
 from user.application.common.application_error import ApplicationError, ApplicationTypeError
+from user.application.common.const.errors import INVALID_ROLE, MISSING_ROLE, MISSING_USER_ID
 from user.application.ports.auth import IdentityProvider
 from user.domain.user import UserId, UserRole
-from user.application.common.const.errors import MISSING_ROLE, MISSING_USER_ID, INVALID_ROLE
 
 
 class IdentityProviderImpl(IdentityProvider):

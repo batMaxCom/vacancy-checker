@@ -1,9 +1,10 @@
 from .activate_user import ActivateUserCommand, ActivateUserCommandHandler
-from .change_role import ChangeRoleCommand, ChangeRoleCommandHandler
+from .change_user_role import ChangeRoleCommand, ChangeRoleCommandHandler
 from .create_user import CreateUserCommand, CreateUserCommandHandler
-from .delete_user import DeleteUserCommand, DeleteUserCommandHandler
+from .delete_current_user import DeleteUserCommand, DeleteUserCommandHandler
+from .delete_user import DeleteUserByIdCommand, DeleteUserByIdCommandHandler
 from .suspend_user import SuspendUserCommand, SuspendUserCommandHandler
-from .update_profile import UpdateProfileCommand, UpdateProfileCommandHandler
+from .update_current_user import UpdateProfileCommand, UpdateProfileCommandHandler
 
 __all__ = (
     "ActivateUserCommand",
@@ -12,10 +13,12 @@ __all__ = (
     "ChangeRoleCommandHandler",
     "CreateUserCommand",
     "CreateUserCommandHandler",
-    "DeleteUserCommand",
-    "DeleteUserCommandHandler",
+    "DeleteUserByIdCommand",
+    "DeleteUserByIdCommandHandler",
     "SuspendUserCommand",
     "SuspendUserCommandHandler",
     "UpdateProfileCommand",
     "UpdateProfileCommandHandler",
+    "DeleteUserCommand",
+    "DeleteUserCommandHandler",
 )

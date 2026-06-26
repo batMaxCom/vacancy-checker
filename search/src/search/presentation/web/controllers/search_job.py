@@ -17,7 +17,7 @@ from search.domain.search_profile.value_objects import SearchProfileId
 from search.presentation.web.schemas.base import SuccessfulResponse
 
 SEARCH_JOB_CONTROLLER = APIRouter(
-    prefix="/api/v1/search-jobs", tags=["search-jobs"],
+    prefix="/search-jobs", tags=["Search Jobs"],
 )
 
 

@@ -1,30 +1,22 @@
 import { SEARCH_API } from './config'
-import type { ApiResponse, SearchProfile, SearchJob, SelectItem } from './types'
+import type { SearchProfile, SearchJob, SelectItem } from './types'
+import { createHttpClient } from './http'
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${SEARCH_API}${path}`, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-  })
-  const body: ApiResponse<T> = await res.json()
-  if (!res.ok) throw new Error((body as any).error ?? `HTTP ${res.status}`)
-  return body.result as T
-}
+const request = createHttpClient(SEARCH_API)
 
 export const searchApi = {
-  getProfiles: (userId: string) =>
-    request<SearchProfile[]>(`/api/v1/search-profiles?user_id=${userId}`),
+  getProfiles: () =>
+    request<SearchProfile[]>('/search-profiles'),
 
   getProfile: (id: string) =>
-    request<SearchProfile>(`/api/v1/search-profiles/${id}`),
+    request<SearchProfile>(`/search-profiles/${id}`),
 
   createProfile: (data: {
-    user_id: string
     name: string
     keywords: string[]
     search_interval_minutes: number
   }) =>
-    request<string>('/api/v1/search-profiles', {
+    request<string>('/search-profiles', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -34,32 +26,32 @@ export const searchApi = {
     keywords: string[]
     search_interval_minutes: number
   }) =>
-    request<null>(`/api/v1/search-profiles/${id}`, {
+    request<null>(`/search-profiles/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     }),
 
   deleteProfile: (id: string) =>
-    request<null>(`/api/v1/search-profiles/${id}`, { method: 'DELETE' }),
+    request<null>(`/search-profiles/${id}`, { method: 'DELETE' }),
 
   activateProfile: (id: string) =>
-    request<null>(`/api/v1/search-profiles/${id}/activate`, { method: 'POST' }),
+    request<null>(`/search-profiles/${id}/activate`, { method: 'POST' }),
 
   deactivateProfile: (id: string) =>
-    request<null>(`/api/v1/search-profiles/${id}/deactivate`, { method: 'POST' }),
+    request<null>(`/search-profiles/${id}/deactivate`, { method: 'POST' }),
 
   runSearch: (id: string) =>
-    request<string>(`/api/v1/search-profiles/${id}/search`, { method: 'POST' }),
+    request<string>(`/search-profiles/${id}/search`, { method: 'POST' }),
 
-  getProfileSelectList: (userId: string) =>
-    request<SelectItem[]>(`/api/v1/search-profiles/select/${userId}`),
+  getProfileSelectList: () =>
+    request<SelectItem[]>('/search-profiles/select'),
 
   getJobs: (profileId: string) =>
-    request<SearchJob[]>(`/api/v1/search-profiles/${profileId}/jobs`),
+    request<SearchJob[]>(`/search-profiles/${profileId}/jobs`),
 
   getJob: (jobId: string) =>
-    request<SearchJob>(`/api/v1/search-jobs/${jobId}`),
+    request<SearchJob>(`/search-jobs/${jobId}`),
 
   deleteJobsByProfile: (profileId: string) =>
-    request<null>(`/api/v1/search-jobs/profile/${profileId}`, { method: 'DELETE' }),
+    request<null>(`/search-jobs/profile/${profileId}`, { method: 'DELETE' }),
 }

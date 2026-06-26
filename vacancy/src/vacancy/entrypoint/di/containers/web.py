@@ -2,6 +2,7 @@ from dishka import AsyncContainer, make_async_container
 
 from vacancy.entrypoint.di.providers.web import (
     ApplicationAdaptersProvider,
+    AuthAdaptersProvider,
     DomainAdaptersProvider,
     FastapiProvider,
     HandlersProvider,
@@ -9,9 +10,9 @@ from vacancy.entrypoint.di.providers.web import (
     LoggerAdapterProvider,
     MediatorProvider,
     WebConfigProvider,
-    WebPersistenceProvider, AuthAdaptersProvider,
+    WebPersistenceProvider,
 )
-from vacancy.entrypoint.web.config import AppConfig, KafkaConfig, PostgresConfig, AuthConfig
+from vacancy.entrypoint.web.config import AppConfig, AuthConfig, KafkaConfig, PostgresConfig
 
 
 def web_container(

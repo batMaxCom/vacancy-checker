@@ -7,6 +7,8 @@ from user.application.operations.commands.user import (
     ChangeRoleCommandHandler,
     CreateUserCommand,
     CreateUserCommandHandler,
+    DeleteUserByIdCommand,
+    DeleteUserByIdCommandHandler,
     DeleteUserCommand,
     DeleteUserCommandHandler,
     SuspendUserCommand,
@@ -23,7 +25,8 @@ COMMAND_HANDLERS: list[tuple[type[BaseRequest[Any]], type[RequestHandler[Any, An
     (ChangeRoleCommand, ChangeRoleCommandHandler),
     (ActivateUserCommand, ActivateUserCommandHandler),
     (SuspendUserCommand, SuspendUserCommandHandler),
-    (DeleteUserCommand, DeleteUserCommandHandler),
+    (DeleteUserByIdCommand, DeleteUserByIdCommandHandler),
+    (DeleteUserCommand, DeleteUserCommandHandler)
 ]
 
 def register_commands(registry: Registry) -> None:

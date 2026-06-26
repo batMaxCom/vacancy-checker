@@ -3,7 +3,11 @@ from collections.abc import AsyncIterator
 from dishka import Provider, Scope, provide
 from httpx import AsyncClient
 
-from vacancy.application.ports.auth import AuthenticateProcessor, IdentityProvider, PermissionChecker
+from vacancy.application.ports.auth import (
+    AuthenticateProcessor,
+    IdentityProvider,
+    PermissionChecker,
+)
 from vacancy.infrastructure.adapters.auth import (
     AuthenticateProcessorImpl,
     IdentityProviderImpl,

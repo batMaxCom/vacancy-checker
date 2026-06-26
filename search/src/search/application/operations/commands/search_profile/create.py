@@ -13,7 +13,6 @@ from search.domain.search_profile.value_objects import (
     SearchInterval,
     SearchProfileId,
 )
-from search.domain.shared_kernel.value_objects import UserId
 
 
 @dataclass(frozen=True, slots=True)

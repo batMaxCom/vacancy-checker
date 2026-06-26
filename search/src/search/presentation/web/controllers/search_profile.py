@@ -28,7 +28,6 @@ from search.application.ports.auth import AuthenticateProcessor
 from search.application.ports.cqrs import Sender
 from search.domain.search_job.value_objects import SearchJobId
 from search.domain.search_profile.value_objects import SearchProfileId
-from search.domain.shared_kernel.value_objects import UserId
 from search.presentation.web.schemas import (
     CreateSearchProfileRequest,
     SuccessfulResponse,
@@ -36,7 +35,7 @@ from search.presentation.web.schemas import (
 )
 
 SEARCH_PROFILE_CONTROLLER = APIRouter(
-    prefix="/api/v1/search-profiles", tags=["search-profiles"],
+    prefix="/search-profiles", tags=["Search Profiles"],
 )
 
 

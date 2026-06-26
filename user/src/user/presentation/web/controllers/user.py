@@ -3,45 +3,27 @@ from typing import Annotated
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
-from fastapi import APIRouter, Body, Query
+from fastapi import APIRouter, Query
 from starlette.status import HTTP_200_OK
 
-from user.application.common.dto import Pagination, PaginationResult, UserBriefDTO, UserDTO
+from user.application.common.dto import Pagination, PaginationResult, UserBriefDTO
 from user.application.operations.commands.user import (
     ActivateUserCommand,
     ChangeRoleCommand,
-    DeleteUserCommand,
+    DeleteUserByIdCommand,
     SuspendUserCommand,
-    UpdateProfileCommand,
 )
 from user.application.operations.queries.user import (
-    GetCurrentUserQuery,
     GetUserByIdQuery,
     GetUsersQuery,
 )
-from user.application.ports.auth import AuthenticateProcessor, IdentityProvider
+from user.application.ports.auth import AuthenticateProcessor
 from user.application.ports.cqrs import Sender
-from user.domain.user.value_objects import AvatarUrl, FirstName, LastName, UserId, UserRole
+from user.domain.user.value_objects import UserId, UserRole
 from user.presentation.web.schemas.base import SuccessfulResponse
-from user.presentation.web.schemas.request import (
-    ChangeRoleRequest,
-    UpdateProfileRequest,
-)
+from user.presentation.web.schemas.request import ChangeRoleRequest
 
-USER_CONTROLLER = APIRouter(prefix="/user", tags=["user"])
-
-
-@USER_CONTROLLER.get("/me")
-@inject
-async def get_current_user(
-    sender: FromDishka[Sender],
-    auth_processor: FromDishka[AuthenticateProcessor],
-) -> SuccessfulResponse[UserDTO | None]:
-    await auth_processor.process()
-    query = GetCurrentUserQuery()
-    result = await sender.send(query)
-    return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
-
+USER_CONTROLLER = APIRouter(prefix="/user", tags=["User"])
 
 @USER_CONTROLLER.get("/list/paginated")
 @inject
@@ -95,31 +77,13 @@ async def get_user_by_id(
 #     return SuccessfulResponse(status_code=HTTP_201_CREATED)
 
 
-@USER_CONTROLLER.patch("/{user_id}/profile")
-@inject
-async def update_profile(
-    user_id: uuid.UUID,
-    body: Annotated[UpdateProfileRequest, Body(embed=True)],
-    *,
-    sender: FromDishka[Sender],
-    auth_processor: FromDishka[AuthenticateProcessor]
-) -> SuccessfulResponse[None]:
-    await auth_processor.process()
-    command = UpdateProfileCommand(
-        user_id=UserId(user_id),
-        first_name=FirstName(body.first_name),
-        last_name=LastName(body.last_name),
-        avatar_url=AvatarUrl(body.avatar_url) if body.avatar_url is not None else None,
-    )
-    await sender.send(command)
-    return SuccessfulResponse(status_code=HTTP_200_OK)
 
 
 @USER_CONTROLLER.patch("/{user_id}/role")
 @inject
 async def change_role(
     user_id: uuid.UUID,
-    body: Annotated[ChangeRoleRequest, Body(embed=True)],
+    body: ChangeRoleRequest,
     *,
     sender: FromDishka[Sender],
     auth_processor: FromDishka[AuthenticateProcessor]
@@ -170,6 +134,6 @@ async def delete_user(
     auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
     await auth_processor.process()
-    command = DeleteUserCommand(user_id=UserId(user_id))
+    command = DeleteUserByIdCommand(user_id=UserId(user_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)

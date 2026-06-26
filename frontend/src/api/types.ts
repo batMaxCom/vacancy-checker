@@ -50,6 +50,15 @@ export interface Salary {
   max_amount: number | null
 }
 
+export interface UserProfile {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  role: string
+  status: string
+}
+
 export interface Vacancy {
   id: string
   source_id: string
