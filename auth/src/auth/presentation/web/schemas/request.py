@@ -23,8 +23,3 @@ class RefreshTokenRequest:
 @dataclass(frozen=True)
 class LogoutRequest:
     refresh_token: str
-
-
-@dataclass(frozen=True)
-class IntrospectRequest:
-    access_token: str

@@ -13,7 +13,7 @@ from auth.domain.shared_kernel.value_objects import FirstName, LastName
 from auth.presentation.web.schemas.base import SuccessfulResponse
 from auth.presentation.web.schemas.request import RegisterRequest
 
-REGISTRATION_CONTROLLER = APIRouter(prefix="/auth", tags=["auth"])
+REGISTRATION_CONTROLLER = APIRouter(prefix="/auth", tags=["register"])
 
 
 @REGISTRATION_CONTROLLER.post("/register")

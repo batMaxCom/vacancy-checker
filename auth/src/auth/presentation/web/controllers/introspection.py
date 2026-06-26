@@ -6,17 +6,14 @@ from starlette.status import HTTP_200_OK
 
 from auth.application.ports.auth import AuthContext, AuthenticationPort
 from auth.presentation.web.schemas.base import SuccessfulResponse
-from auth.presentation.web.schemas.request import IntrospectRequest
 
-INTROSPECTION_CONTROLLER = APIRouter(prefix="/auth", tags=["auth"])
+INTROSPECTION_CONTROLLER = APIRouter(prefix="/internal/auth", tags=["internal"], include_in_schema=False)
 
 
-@INTROSPECTION_CONTROLLER.post("/introspect")
+@INTROSPECTION_CONTROLLER.get("/introspect")
 @inject
 async def introspect(
-    body: IntrospectRequest,
-    *,
     authentication: FromDishka[AuthenticationPort],
 ) -> SuccessfulResponse[AuthContext]:
-    result = await authentication.authenticate(access_token=body.access_token)
+    result = await authentication.authenticate()
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)

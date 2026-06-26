@@ -1,6 +1,5 @@
 from .base import ErrorResponse, Response, SuccessfulResponse
 from .request import (
-    IntrospectRequest,
     LoginRequest,
     LogoutRequest,
     RefreshTokenRequest,
@@ -9,7 +8,6 @@ from .request import (
 
 __all__ = (
     "ErrorResponse",
-    "IntrospectRequest",
     "LoginRequest",
     "LogoutRequest",
     "RefreshTokenRequest",
