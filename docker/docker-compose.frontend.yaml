@@ -1,0 +1,12 @@
+services:
+
+  frontend.web:
+    container_name: frontend-web
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      target: web-runtime
+    env_file: ../enviroment/.frontend.env
+    restart: unless-stopped
+    networks:
+      - ccheck_network

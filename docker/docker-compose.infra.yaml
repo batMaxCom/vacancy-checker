@@ -1,0 +1,54 @@
+services:
+
+  ccheck.db:
+    container_name: ccheck-db
+    image: postgres:17.4-alpine
+    env_file: ../enviroment/.db.env
+    restart: unless-stopped
+    volumes:
+      - pg_data:/data/postgres
+      - ../infra/scripts/db-initializer.sh:/docker-entrypoint-initdb.d/db-initializer.sh
+    networks:
+      - ccheck_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ccheck.rabbitmq:
+    container_name: ccheck-rabbitmq
+    image: rabbitmq:3.12-management-alpine
+    env_file: ../enviroment/.rabbit.env
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - ccheck_network
+
+  ccheck.kafka:
+    container_name: ccheck-kafka
+    image: apache/kafka:latest
+    restart: unless-stopped
+    env_file:
+      - ../enviroment/.kafka.env
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - ccheck_network
+
+networks:
+  ccheck_network:
+
+volumes:
+  pg_data:
+  kafka_data:

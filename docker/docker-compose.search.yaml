@@ -1,0 +1,24 @@
+services:
+
+  search.web:
+    container_name: search-web
+    build:
+      context: ../backend/search
+      dockerfile: Dockerfile
+      target: web-runtime
+    env_file: .env
+    command: ["sh", "-c", "search-cli migrate && search-cli start-uvicorn"]
+    restart: unless-stopped
+    depends_on:
+      ccheck.db:
+        condition: service_healthy
+      ccheck.kafka:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80/healthcheck || exit 1" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ccheck_network
