@@ -1,4 +1,5 @@
 from .application import ApplicationAdaptersProvider
+from .auth import AuthAdaptersProvider
 from .broker import BrokerProvider
 from .config import WebConfigProvider
 from .domain import DomainAdaptersProvider
@@ -9,13 +10,14 @@ from .mediator import MediatorProvider
 from .persistence import WebPersistenceProvider
 
 __all__ = (
-    "BrokerProvider",
-    "MediatorProvider",
-    "WebConfigProvider",
-    "WebPersistenceProvider",
-    "DomainAdaptersProvider",
     "ApplicationAdaptersProvider",
+    "AuthAdaptersProvider",
+    "BrokerProvider",
+    "DomainAdaptersProvider",
     "FastapiProvider",
     "HandlersProvider",
     "LoggerAdapterProvider",
+    "MediatorProvider",
+    "WebConfigProvider",
+    "WebPersistenceProvider",
 )

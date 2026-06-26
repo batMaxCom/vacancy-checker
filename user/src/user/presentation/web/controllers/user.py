@@ -19,6 +19,7 @@ from user.application.operations.queries.user import (
     GetUserByIdQuery,
     GetUsersQuery,
 )
+from user.application.ports.auth import AuthenticateProcessor, IdentityProvider
 from user.application.ports.cqrs import Sender
 from user.domain.user.value_objects import AvatarUrl, FirstName, LastName, UserId, UserRole
 from user.presentation.web.schemas.base import SuccessfulResponse
@@ -33,11 +34,11 @@ USER_CONTROLLER = APIRouter(prefix="/user", tags=["user"])
 @USER_CONTROLLER.get("/me")
 @inject
 async def get_current_user(
-    user_id: Annotated[uuid.UUID, Query()],
-    *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor],
 ) -> SuccessfulResponse[UserDTO | None]:
-    query = GetCurrentUserQuery(user_id=UserId(user_id))
+    await auth_processor.process()
+    query = GetCurrentUserQuery()
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
 
@@ -51,7 +52,9 @@ async def get_users_paginated(
     status: Annotated[str | None, Query()] = None,
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[PaginationResult[UserBriefDTO]]:
+    await auth_processor.process()
     query = GetUsersQuery(
         pagination=Pagination(page_number=page_number, page_size=page_size),
         role=role,
@@ -67,7 +70,9 @@ async def get_user_by_id(
     user_id: uuid.UUID,
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[UserBriefDTO | None]:
+    await auth_processor.process()
     query = GetUserByIdQuery(user_id=UserId(user_id))
     result = await sender.send(query)
     return SuccessfulResponse(status_code=HTTP_200_OK, result=result)
@@ -97,7 +102,9 @@ async def update_profile(
     body: Annotated[UpdateProfileRequest, Body(embed=True)],
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = UpdateProfileCommand(
         user_id=UserId(user_id),
         first_name=FirstName(body.first_name),
@@ -115,7 +122,9 @@ async def change_role(
     body: Annotated[ChangeRoleRequest, Body(embed=True)],
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = ChangeRoleCommand(
         user_id=UserId(user_id),
         role=UserRole[body.role],
@@ -130,7 +139,9 @@ async def activate_user(
     user_id: uuid.UUID,
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = ActivateUserCommand(user_id=UserId(user_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)
@@ -142,7 +153,9 @@ async def suspend_user(
     user_id: uuid.UUID,
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = SuspendUserCommand(user_id=UserId(user_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)
@@ -154,7 +167,9 @@ async def delete_user(
     user_id: uuid.UUID,
     *,
     sender: FromDishka[Sender],
+    auth_processor: FromDishka[AuthenticateProcessor]
 ) -> SuccessfulResponse[None]:
+    await auth_processor.process()
     command = DeleteUserCommand(user_id=UserId(user_id))
     await sender.send(command)
     return SuccessfulResponse(status_code=HTTP_200_OK)

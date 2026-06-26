@@ -90,6 +90,7 @@ def app_factory() -> FastAPI:
     setup_logging(debug=config.app_config.debug)
     container = web_container(
         app_config=config.app_config,
+        auth_config=config.auth_config,
         db_config=config.db_config,
         broker_config=config.broker_config,
     )
