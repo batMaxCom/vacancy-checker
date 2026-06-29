@@ -13,6 +13,7 @@ import UserProfilePage from './pages/UserProfile'
 import VacanciesList from './pages/VacanciesList'
 import VacancyDetail from './pages/VacancyDetail'
 import VacancyForm from './pages/VacancyForm'
+import NotFound from './pages/NotFound'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth()
@@ -43,6 +44,7 @@ function AppRoutes() {
       <Route path="/vacancies/new" element={<Layout><ProtectedRoute><VacancyForm /></ProtectedRoute></Layout>} />
       <Route path="/vacancies/:id" element={<Layout><ProtectedRoute><VacancyDetail /></ProtectedRoute></Layout>} />
       <Route path="/vacancies/:id/edit" element={<Layout><ProtectedRoute><VacancyForm /></ProtectedRoute></Layout>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
