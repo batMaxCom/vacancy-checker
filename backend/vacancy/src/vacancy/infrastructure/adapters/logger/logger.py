@@ -19,5 +19,8 @@ class StructlogLogger(Logger):
     def error(self, event: str | None = None, *args: Any, **kw: Any) -> Any:
         self._logger.error(event, *args, **kw)
 
+    def exception(self, event: str | None = None, *args: Any, **kw: Any) -> Any:
+        self._logger.exception(event, *args, **kw)
+
     async def aexception(self, event: str, *args: Any, **kw: Any) -> Any:
         await self._logger.aexception(event, *args, **kw)

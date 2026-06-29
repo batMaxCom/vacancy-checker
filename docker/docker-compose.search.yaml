@@ -1,12 +1,12 @@
 services:
 
-  search.web:
-    container_name: search-web
+  ccheck.search.web:
+    container_name: ccheck-search-web
     build:
       context: ../backend/search
       dockerfile: Dockerfile
       target: web-runtime
-    env_file: .env
+    env_file: ../enviroment/.search.env
     command: ["sh", "-c", "search-cli migrate && search-cli start-uvicorn"]
     restart: unless-stopped
     depends_on:

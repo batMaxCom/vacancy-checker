@@ -1,7 +1,7 @@
 services:
 
-  vacancy.web:
-    container_name: vacancy-web
+  ccheck.vacancy.web:
+    container_name: ccheck-vacancy-web
     build:
       context: ../backend/vacancy/
       dockerfile: Dockerfile

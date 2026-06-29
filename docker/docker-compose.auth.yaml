@@ -1,7 +1,7 @@
 services:
 
-  auth.web:
-    container_name: auth-web
+  ccheck.auth.web:
+    container_name: ccheck-auth-web
     build:
       context: ../backend/auth
       dockerfile: Dockerfile

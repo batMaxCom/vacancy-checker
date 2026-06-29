@@ -2,6 +2,7 @@ import asyncio
 import json
 
 from confluent_kafka import KafkaException, Message
+from confluent_kafka.admin import AdminClient, NewTopic  # type: ignore[attr-defined]
 from confluent_kafka.aio import AIOConsumer
 
 from vacancy.application.ports.broker import EventConsumer, EventHandler
@@ -37,6 +38,8 @@ class KafkaEventConsumer(EventConsumer):
 
         self._stop_event.clear()
 
+        await self._ensure_topics()
+
         self._task = asyncio.create_task(
             self._consume_loop(),
             name="kafka-consumer",
@@ -51,6 +54,35 @@ class KafkaEventConsumer(EventConsumer):
 
         if self._consumer:
             await self._consumer.close()
+
+    async def _ensure_topics(self) -> None:
+        admin = AdminClient(self._config.to_dict())
+
+        new_topics = [
+            NewTopic(topic, num_partitions=1, replication_factor=1)
+            for topic in self._topics
+        ]
+
+        futures = admin.create_topics(new_topics)
+
+        for topic, future in futures.items():
+            try:
+                future.result()
+                await self._logger.ainfo(
+                    event="KAFKA_TOPIC_CREATED",
+                    topic=topic,
+                )
+            except Exception as exc:
+                if "TOPIC_ALREADY_EXISTS" in str(exc):
+                    await self._logger.ainfo(
+                        event="KAFKA_TOPIC_EXISTS",
+                        topic=topic,
+                    )
+                else:
+                    await self._logger.aexception(
+                        "Failed to create topic %s: %s",
+                        topic, exc,
+                    )
 
     async def _consume_loop(self) -> None:
         attempt = 0

@@ -1,7 +1,7 @@
 services:
 
-  frontend.web:
-    container_name: frontend-web
+  ccheck.frontend.web:
+    container_name: ccheck-frontend-web
     build:
       context: ../frontend
       dockerfile: Dockerfile
@@ -10,3 +10,7 @@ services:
     restart: unless-stopped
     networks:
       - ccheck_network
+    ports:
+      - "3000:80"
+    volumes:
+      - ../infra/scripts/inject-env.sh:/docker-entrypoint.d/40-inject-env.sh

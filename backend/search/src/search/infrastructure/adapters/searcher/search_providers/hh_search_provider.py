@@ -217,6 +217,7 @@ class HHSearchProvider(VacancySearchProvider):
         self,
         keywords: list[Keyword],
     ) -> list[FoundVacancyDto]:
+        print("Check!")
         base_params: dict[str, str] = {
             "text": " ".join(k.value for k in keywords),
             "area": "113",

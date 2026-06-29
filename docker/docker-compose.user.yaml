@@ -1,7 +1,7 @@
 services:
 
-  user.web:
-    container_name: user-web
+  ccheck.user.web:
+    container_name: ccheck-user-web
     build:
       context: ../backend/user
       dockerfile: Dockerfile

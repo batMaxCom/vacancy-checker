@@ -2,7 +2,9 @@ from dishka import Provider, Scope, provide
 
 from search.application.ports.searcher import VacancySearcher, VacancySearchProvider
 from search.entrypoint.web.config import TgConfig
-from search.infrastructure.adapters.searcher.search_providers.tg_search_provider import (
+from search.infrastructure.adapters.searcher.search_providers import (
+    HabrCareerSearchProvider,
+    HHSearchProvider,
     TgSearchProvider,
 )
 from search.infrastructure.adapters.searcher.vacancy_searcher import MultiSourceVacancySearcher
@@ -14,8 +16,8 @@ class SearcherProvider(Provider):
     @provide
     def get_vacancy_searcher(self) -> VacancySearcher:
         providers: list[VacancySearchProvider] = [
-            # HHSearchProvider(),
-            # HabrCareerSearchProvider(),
+            HHSearchProvider(),
+            HabrCareerSearchProvider(),
         ]
 
         tg_config = TgConfig.from_env()

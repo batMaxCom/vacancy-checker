@@ -24,7 +24,7 @@ class RabbitMQConfig:
         host = environ.get("RABBITMQ_HOST", "localhost")
         port = int(environ.get("RABBITMQ_PORT", "5672"))
         user = environ.get("RABBITMQ_USER", "user")
-        password = environ.get("RABBITMQ_PASSWORD", "user_pwd")
+        password = environ.get("RABBITMQ_PASS", "user_pwd")
         uri = f"amqp://{user}:{password}@{host}:{port}/"
 
         exchange_name = environ.get("RABBITMQ_EXCHANGE_NAME", "user")

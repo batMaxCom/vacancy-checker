@@ -17,14 +17,14 @@ class RabbitMQConfig:
     @classmethod
     def from_env(cls) -> Self:
         """Возвращает настройки RabbitMQ."""
-        host = environ.get("RABBIT_HOST", "localhost")
-        port = int(environ.get("RABBIT_PORT", "5432"))
-        user = environ.get("RABBIT_USER", "user")
-        password = environ.get("RABBIT_PASSWORD", "user_pwd")
+        host = environ.get("RABBITMQ_HOST", "localhost")
+        port = int(environ.get("RABBITMQ_PORT", "5432"))
+        user = environ.get("RABBITMQ_USER", "user")
+        password = environ.get("RABBITMQ_PASS", "user_pwd")
         uri = f"amqp://{user}:{password}@{host}:{port}/"
 
         exchange_name = environ.get(
-            "RABBIT_EXCHANGE_NAME", "exchange_name"
+            "RABBITMQ_EXCHANGE_NAME", "exchange_name"
         )
 
         return cls(
