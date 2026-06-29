@@ -20,6 +20,18 @@ stop-infra:  ## Stop infrastructure only
 stop-%:  ## Stop a specific service (e.g. stop-auth, stop-user)
 	docker compose stop ccheck.$*.web
 
+# === Env ===
+
+env-init:  ## Create .env files from templates
+	@for f in enviroment/*.env.template; do \
+		name="$$(basename "$$f" .env.template)"; \
+		cp -n "$$f" "enviroment/.$$name.env" && echo "Created enviroment/.$$name.env" || echo "Skipped enviroment/.$$name.env (exists)"; \
+	done
+	@for f in backend/*/env.template; do \
+		dir="$$(dirname "$$f")"; \
+		cp -n "$$f" "$$dir/.env" && echo "Created $$dir/.env" || echo "Skipped $$dir/.env (exists)"; \
+	done
+
 # === Build ===
 
 build:  ## Build all Docker images
