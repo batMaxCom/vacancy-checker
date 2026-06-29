@@ -1,0 +1,9 @@
+name: ccheck
+
+include:
+  - ./docker/docker-compose.infra.yaml
+  - ./docker/docker-compose.auth.yaml
+  - ./docker/docker-compose.user.yaml
+  - ./docker/docker-compose.vacancy.yaml
+  - ./docker/docker-compose.search.yaml
+  - ./docker/docker-compose.frontend.yaml
