@@ -15,7 +15,7 @@ from user.domain.user.value_objects import AvatarUrl, FirstName, LastName
 from user.presentation.web.schemas.base import SuccessfulResponse
 from user.presentation.web.schemas.request import UpdateProfileRequest
 
-PROFILE_CONTROLLER = APIRouter(prefix="/profile", tags=["Profile"])
+PROFILE_CONTROLLER = APIRouter(prefix="/api/v1/profile", tags=["Profile"])
 
 
 @PROFILE_CONTROLLER.get("")

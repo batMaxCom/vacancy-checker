@@ -23,7 +23,7 @@ from user.domain.user.value_objects import UserId, UserRole
 from user.presentation.web.schemas.base import SuccessfulResponse
 from user.presentation.web.schemas.request import ChangeRoleRequest
 
-USER_CONTROLLER = APIRouter(prefix="/user", tags=["User"])
+USER_CONTROLLER = APIRouter(prefix="/api/v1/user", tags=["User"])
 
 @USER_CONTROLLER.get("/list/paginated")
 @inject

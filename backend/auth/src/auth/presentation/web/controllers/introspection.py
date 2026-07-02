@@ -7,7 +7,7 @@ from starlette.status import HTTP_200_OK
 from auth.application.ports.auth import AuthContext, AuthenticationPort
 from auth.presentation.web.schemas.base import SuccessfulResponse
 
-INTROSPECTION_CONTROLLER = APIRouter(prefix="/internal/auth", tags=["internal"], include_in_schema=False)
+INTROSPECTION_CONTROLLER = APIRouter(prefix="/api/v1/internal/auth", tags=["internal"], include_in_schema=False)
 
 
 @INTROSPECTION_CONTROLLER.get("/introspect")

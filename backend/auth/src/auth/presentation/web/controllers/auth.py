@@ -9,7 +9,7 @@ from auth.application.ports.auth import AuthServicePort
 from auth.presentation.web.schemas.base import SuccessfulResponse
 from auth.presentation.web.schemas.request import LoginRequest, LogoutRequest, RefreshTokenRequest
 
-AUTH_CONTROLLER = APIRouter(prefix="/auth", tags=["auth"])
+AUTH_CONTROLLER = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 
 @AUTH_CONTROLLER.post("/login")

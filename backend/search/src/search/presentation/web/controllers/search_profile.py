@@ -35,7 +35,7 @@ from search.presentation.web.schemas import (
 )
 
 SEARCH_PROFILE_CONTROLLER = APIRouter(
-    prefix="/search-profiles", tags=["Search Profiles"],
+    prefix="/api/v1/search-profiles", tags=["Search Profiles"],
 )
 
 

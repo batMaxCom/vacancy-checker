@@ -25,7 +25,7 @@ from vacancy.entrypoint.web.config import AppConfig
 from vacancy.presentation.web.schemas.base import SuccessfulResponse
 from vacancy.presentation.web.schemas.request import CreateVacancyRequest, UpdateVacancyRequest
 
-VACANCY_CONTROLLER = APIRouter(prefix="/vacancy", tags=["Vacancy"])
+VACANCY_CONTROLLER = APIRouter(prefix="/api/v1/vacancy", tags=["Vacancy"])
 
 
 @VACANCY_CONTROLLER.get("/{vacancy_id}")
